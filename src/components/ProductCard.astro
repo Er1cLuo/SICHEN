@@ -1,0 +1,23 @@
+---
+import PlaceholderImage from './PlaceholderImage.astro';
+
+interface Props {
+  title: string;
+  desc: string;
+  tag?: string;
+  href?: string;
+}
+
+const { title, desc, tag, href = '/products' } = Astro.props;
+---
+
+<a class="card" href={href} data-reveal>
+  <div class="card__media">
+    <PlaceholderImage label={title} sub={tag ?? '产品实拍图 · 占位'} aspect="4/3" />
+  </div>
+  <div class="card__body">
+    <h3 class="card__title">{title}</h3>
+    <p class="card__desc">{desc}</p>
+    <span class="card__link">了解更多 <span aria-hidden="true">→</span></span>
+  </div>
+</a>

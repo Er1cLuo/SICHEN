@@ -1,0 +1,79 @@
+---
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const { title, description = '思晨五金制品有限公司——精密五金制品研发、制造与交付，服务全球工业客户。' } =
+  Astro.props;
+
+const siteTitle = title.includes('思晨') ? title : `${title} | 思晨五金制品有限公司`;
+const canonical = Astro.site ? new URL(Astro.url.pathname, Astro.site).href : undefined;
+
+const orgJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: '思晨五金制品有限公司',
+  alternateName: 'Sichen Hardware Products Co., Ltd.',
+  description: '精密五金制品研发、制造与销售，服务全球工业客户。',
+  url: 'https://www.example.com/', // 上线后替换为正式域名
+  email: 'info@sichen-hardware.com', // 占位
+  address: {
+    '@type': 'PostalAddress',
+    addressRegion: '广东',
+    addressCountry: 'CN',
+  },
+};
+---
+
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{siteTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={siteTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:site_name" content="思晨五金制品有限公司" />
+    {canonical && <link rel="canonical" href={canonical} />}
+
+    <script type="application/ld+json" set:html={JSON.stringify(orgJsonLd)} />
+  </head>
+  <body>
+    <Header current={Astro.url.pathname} />
+    <main>
+      <slot />
+    </main>
+    <Footer />
+
+    <script>
+      // 滚动浮现动画
+      const revealEls = document.querySelectorAll('[data-reveal]');
+
+      if ('IntersectionObserver' in window) {
+        const io = new IntersectionObserver(
+          (entries) => {
+            for (const entry of entries) {
+              if (entry.isIntersecting) {
+                entry.target.classList.add('is-visible');
+                io.unobserve(entry.target);
+              }
+            }
+          },
+          { threshold: 0.12, rootMargin: '0px 0px -40px 0px' }
+        );
+        revealEls.forEach((el) => io.observe(el));
+      } else {
+        revealEls.forEach((el) => el.classList.add('is-visible'));
+      }
+    </script>
+  </body>
+</html>

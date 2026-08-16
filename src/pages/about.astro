@@ -1,0 +1,149 @@
+---
+import Layout from '../layouts/Layout.astro';
+import SectionHeading from '../components/SectionHeading.astro';
+import PlaceholderImage from '../components/PlaceholderImage.astro';
+
+// 提示：成立时间、发展历程等均为占位内容，上线前请替换为真实信息。
+const values = [
+  {
+    title: '我们的使命',
+    desc: '以可靠的五金制品与专业服务，助力客户产品稳定量产、走向市场。',
+  },
+  {
+    title: '我们的愿景',
+    desc: '成为值得全球工业客户长期信赖的五金制品制造商。',
+  },
+  {
+    title: '我们的价值观',
+    desc: '品质为本、诚信立身、精益求精、合作共赢。',
+  },
+];
+
+const timeline = [
+  { year: '2008', title: '公司创立', desc: '思晨五金成立，专注五金冲压与机加业务，服务本地制造企业。（占位）' },
+  { year: '2012', title: '产能升级', desc: '引进精密冲压与 CNC 加工设备，产能与精度显著提升。（占位）' },
+  { year: '2016', title: '体系认证', desc: '通过 ISO9001 质量管理体系认证，建立标准化品质管控流程。（占位）' },
+  { year: '2019', title: '走向海外', desc: '产品开始出口海外市场，服务客户覆盖多个国家与地区。（占位）' },
+  { year: '2022', title: '自动化改造', desc: '推进产线自动化与数字化改造，实现更高效、更稳定的交付。（占位）' },
+  { year: '2025', title: '持续精进', desc: '持续加大研发投入，向更精密、更智能的制造方向迈进。（占位）' },
+];
+
+const certificates = [
+  { name: 'ISO9001', sub: '质量管理体系' },
+  { name: 'ISO14001', sub: '环境管理体系' },
+  { name: '高新技术企业', sub: '研发创新能力' },
+  { name: '优质供应商', sub: '客户长期认可' },
+];
+---
+
+<Layout title="关于我们" description="了解思晨五金制品有限公司——公司简介、发展历程、企业文化与资质荣誉。">
+
+  <section class="page-hero">
+    <div class="container">
+      <p class="eyebrow" data-reveal>ABOUT SICHEN</p>
+      <h1 class="page-hero__title" data-reveal>关于我们</h1>
+      <p class="page-hero__desc" data-reveal>
+        一家专注于精密五金制品研发、制造与交付的企业，以匠心与品质赢得客户信赖。
+      </p>
+    </div>
+  </section>
+
+  <!-- 公司简介 -->
+  <section class="section">
+    <div class="container">
+      <div class="split">
+        <div class="split__body">
+          <SectionHeading eyebrow="COMPANY PROFILE" title="公司简介" />
+          <p data-reveal>
+            思晨五金制品有限公司成立于广东，是一家专注于五金制品研发、制造与销售的企业。
+            公司主营精密冲压件、精密机加工零件、紧固件、钣金件等产品，
+            广泛应用于家电、汽车、电子、机械装备等行业。
+          </p>
+          <p data-reveal>
+            公司拥有从模具开发、冲压/机加成型到表面处理的一站式制造能力，
+            建立了覆盖来料、过程与出货的全流程质量管理体系，
+            以稳定的品质、合理的价格与快速的响应服务国内外客户。
+          </p>
+          <p data-reveal>
+            <span class="muted">（本段为企业简介占位文案，请替换为贵司真实介绍）</span>
+          </p>
+        </div>
+        <div class="split__media">
+          <PlaceholderImage label="公司外景 / 办公环境（占位）" aspect="4/3" />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 理念 -->
+  <section class="section section--alt">
+    <div class="container">
+      <SectionHeading eyebrow="OUR PHILOSOPHY" title="理念与追求" align="center" />
+      <div class="value-grid" style="margin-top: 52px">
+        {
+          values.map((item, i) => (
+            <div class="value-card" data-reveal>
+              <div class="value-card__num">0{i + 1}</div>
+              <h3 class="value-card__title">{item.title}</h3>
+              <p class="value-card__desc">{item.desc}</p>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- 发展历程 -->
+  <section class="section">
+    <div class="container">
+      <SectionHeading eyebrow="OUR JOURNEY" title="发展历程" align="center" />
+      <div class="timeline" style="margin-top: 56px">
+        {
+          timeline.map((item) => (
+            <div class="timeline__item" data-reveal>
+              <div class="timeline__year">{item.year}</div>
+              <h3 class="timeline__title">{item.title}</h3>
+              <p class="timeline__desc">{item.desc}</p>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- 资质荣誉 -->
+  <section class="section section--alt">
+    <div class="container">
+      <SectionHeading eyebrow="CERTIFICATES" title="资质与荣誉" align="center" />
+      <div class="badge-grid" style="margin-top: 52px">
+        {
+          certificates.map((item) => (
+            <div class="badge" data-reveal>
+              <span class="badge__mark" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#d6d6d0" stroke-width="1.2">
+                  <circle cx="12" cy="12" r="9" />
+                  <path d="M8.5 12.2l2.4 2.4 4.6-5" />
+                </svg>
+              </span>
+              <div class="badge__name">{item.name}</div>
+              <div class="badge__sub">{item.sub}</div>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- 工厂环境 -->
+  <section class="section">
+    <div class="container">
+      <SectionHeading eyebrow="OUR FACILITY" title="工厂环境" desc="车间、设备与检测环境（占位，上线后替换为真实照片）。" align="center" />
+      <div class="card-grid card-grid--3" style="margin-top: 52px">
+        <div class="card"><div class="card__media"><PlaceholderImage label="冲压车间（占位）" aspect="4/3" /></div></div>
+        <div class="card"><div class="card__media"><PlaceholderImage label="CNC 加工车间（占位）" aspect="4/3" /></div></div>
+        <div class="card"><div class="card__media"><PlaceholderImage label="品质检测中心（占位）" aspect="4/3" /></div></div>
+      </div>
+    </div>
+  </section>
+
+</Layout>

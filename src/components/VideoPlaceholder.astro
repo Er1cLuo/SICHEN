@@ -1,0 +1,20 @@
+---
+/**
+ * 视频占位组件：上线后替换为真实视频。
+ * 建议：<video controls poster="/images/poster.jpg" src="/videos/brand.mp4" />
+ * 或嵌入 Bilibili / YouTube / 腾讯视频 iframe。
+ */
+interface Props {
+  label?: string;
+  hint?: string;
+}
+
+const { label = '品牌视频 · 占位', hint = '建议 1080P · MP4 (H.264)，或替换为视频平台嵌入' } =
+  Astro.props;
+---
+
+<div class="video-ph" data-reveal>
+  <button class="video-ph__play" type="button" aria-label="播放视频（占位）"></button>
+  <span class="video-ph__label">{label}</span>
+  <span class="video-ph__hint">{hint}</span>
+</div>

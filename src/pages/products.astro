@@ -1,0 +1,102 @@
+---
+import Layout from '../layouts/Layout.astro';
+import SectionHeading from '../components/SectionHeading.astro';
+import ProductCard from '../components/ProductCard.astro';
+
+const products = [
+  {
+    title: '精密冲压件',
+    desc: '连续模、工程模冲压成型，支持多工位自动化生产，广泛用于家电、汽车、电子行业的结构件与功能件。',
+    tag: 'STAMPING',
+  },
+  {
+    title: '精密 CNC 加工件',
+    desc: '车铣复合精密加工，可满足复杂结构与严格公差要求，支持铝、不锈钢、铜等常见金属材质。',
+    tag: 'MACHINING',
+  },
+  {
+    title: '紧固件与连接件',
+    desc: '螺丝、螺母、铆钉、垫圈等标准与非标紧固件，可按图纸定制材质、规格与表面处理。',
+    tag: 'FASTENERS',
+  },
+  {
+    title: '钣金件',
+    desc: '激光切割、折弯、焊接等钣金加工，适用于机箱机柜、设备外壳等各类钣金结构件。',
+    tag: 'SHEET METAL',
+  },
+  {
+    title: '模具设计与制造',
+    desc: '从产品分析到模具设计、制造与试模的全流程服务，为客户产品量产提供有力保障。',
+    tag: 'MOLD & DIE',
+  },
+  {
+    title: '表面处理服务',
+    desc: '电镀、阳极氧化、喷粉、发黑等表面处理配套，兼顾外观与防腐性能要求。',
+    tag: 'FINISHING',
+  },
+];
+
+const steps = [
+  { title: '需求沟通', desc: '了解产品图纸、材质、精度与数量要求，给出专业建议与报价。' },
+  { title: '打样确认', desc: '样品制作与检测，确认尺寸、外观与性能符合要求后封样。' },
+  { title: '批量生产', desc: '标准化产线批量生产，过程检验与抽检并行，保证品质稳定。' },
+  { title: '品质交付', desc: '出货前全检/抽检，按约定交期准时交付，并提供完善的售后服务。' },
+];
+---
+
+<Layout title="产品中心" description="思晨五金产品中心——精密冲压件、精密CNC加工件、紧固件、钣金件、模具设计与表面处理服务。">
+
+  <section class="page-hero">
+    <div class="container">
+      <p class="eyebrow" data-reveal>PRODUCTS & SERVICES</p>
+      <h1 class="page-hero__title" data-reveal>产品中心</h1>
+      <p class="page-hero__desc" data-reveal>
+        从标准件到精密定制件，思晨提供一站式的五金制品制造与配套服务。
+      </p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <SectionHeading
+        eyebrow="CATEGORIES"
+        title="产品与服务"
+        desc="以下分类及描述为占位内容，请根据贵司实际产品线调整。"
+        align="center"
+      />
+      <div class="card-grid" style="margin-top: 56px">
+        {
+          products.map((item) => (
+            <ProductCard title={item.title} desc={item.desc} tag={item.tag} />
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <SectionHeading eyebrow="HOW WE WORK" title="定制合作流程" align="center" />
+      <div class="steps" style="margin-top: 52px">
+        {
+          steps.map((item, i) => (
+            <div class="step" data-reveal>
+              <div class="step__num">{String(i + 1).padStart(2, '0')}</div>
+              <h3 class="step__title">{item.title}</h3>
+              <p class="step__desc">{item.desc}</p>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="cta-band section section--tight">
+    <div class="container cta-band__inner">
+      <h2 class="cta-band__title" data-reveal>有图纸或需求？欢迎询价</h2>
+      <p class="muted" data-reveal>提供图纸或样品，我们将尽快为您评估工艺与报价。</p>
+      <a class="btn btn--solid" href="/contact" data-reveal>发起询价</a>
+    </div>
+  </section>
+
+</Layout>
