@@ -1,0 +1,15 @@
+{
+  "name": "sichen-hardware-website",
+  "type": "module",
+  "version": "1.0.0",
+  "private": true,
+  "description": "思晨五金制品有限公司 企业官网（Astro 静态站点）",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview"
+  },
+  "dependencies": {
+    "astro": "^5.7.0"
+  }
+}
