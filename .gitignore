@@ -10,9 +10,10 @@ yarn-error.log*
 .DS_Store
 Thumbs.db
 
-# 本地环境变量（如有，不进仓库）
+# 本地环境变量（.env 不进仓库，模板除外）
 .env
 .env.*
+!.env.example
 
 # 本机工具脚本（与网站无关，不入仓库）
 启动DeepSeekHarness.cmd

@@ -6,9 +6,22 @@ import PlaceholderImage from '../components/PlaceholderImage.astro';
 // 公司地址（真实地址）
 const address = '广东省中山市三乡镇第二工业区皇冠路5号8栋之A区';
 
-// 免 Key 的"一键导航"链接（点击后在对应地图站点打开并定位该地址）
+// 公司坐标（GCJ-02 火星坐标，高德/腾讯系）；来自高德地理编码：广东省中山市三乡镇皇冠路
+const location = import.meta.env.PUBLIC_AMAP_LOCATION ?? '113.414460,22.348405';
+
+// 高德 Web 服务 Key（通过环境变量注入，不写死在代码里、不进 Git 仓库）
+// 本地：.env 里配置 PUBLIC_AMAP_KEY=xxx
+// 线上：EdgeOne Pages → 项目设置 → 环境变量，添加 PUBLIC_AMAP_KEY（改完需重新部署）
+const amapKey = import.meta.env.PUBLIC_AMAP_KEY ?? '';
+
+// 静态地图地址：有 Key 时显示高德地图，无 Key 时自动回退为位置示意图
+const mapImage = amapKey
+  ? `https://restapi.amap.com/v3/staticmap?location=${location}&zoom=16&size=1024*440&scale=2&markers=mid,,A:${location}&key=${amapKey}`
+  : '';
+
+// 一键导航链接（高德带精确坐标，百度用关键词搜索以避免坐标系偏移）
 const mapLinks = {
-  amap: `https://uri.amap.com/search?keyword=${encodeURIComponent(address)}`,
+  amap: `https://uri.amap.com/marker?position=${location}&name=${encodeURIComponent('思晨五金制品有限公司')}&src=sicen&coordinate=gaode&callnative=0`,
   baidu: `https://map.baidu.com/search/${encodeURIComponent(address)}`,
 };
 
@@ -19,18 +32,6 @@ const contactItems = [
   { label: '电子邮箱', value: 'info@sicen-hardware.com（占位）' },
   { label: '工作时间', value: '周一至周六 8:30 – 18:00' },
 ];
-
-/**
- * 地图嵌入位（可选，默认留空）
- *
- * 目前使用「位置示意图 + 一键导航按钮」，无需任何 Key，稳定可用。
- * 若需要真正的嵌入式地图，二选一后把地址填进 MAP_EMBED 即可自动切换为 iframe：
- *   A. 高德开放平台申请免费 Key，用「静态地图」图片地址，例如：
- *      https://restapi.amap.com/v3/staticmap?location=经度,纬度&zoom=16&size=1200*500&markers=mid,,A:经度,纬度&key=你的KEY
- *   B. 高德/腾讯地图控制台生成的官方地图组件嵌入地址（iframe）
- * 另外：把公司经纬度告诉我，我会写进 JSON-LD 结构化数据，利于本地搜索收录。
- */
-const MAP_EMBED = '';
 ---
 
 <Layout title="联系我们" description="联系思晨五金制品有限公司——欢迎咨询产品、询价与合作。">
@@ -114,18 +115,21 @@ const MAP_EMBED = '';
       <div class="map-card" style="margin-top: 48px" data-reveal>
         <div class="map-card__media">
           {
-            MAP_EMBED ? (
-              <iframe
-                class="map-frame"
-                src={MAP_EMBED}
-                title="公司位置地图"
-                loading="lazy"
-                referrerpolicy="no-referrer-when-downgrade"
-              />
+            mapImage ? (
+              <a href={mapLinks.amap} target="_blank" rel="noopener" aria-label="在高德地图中打开公司位置">
+                <img
+                  class="map-img"
+                  src={mapImage}
+                  alt={`思晨五金制品有限公司位置地图：${address}`}
+                  width="1024"
+                  height="440"
+                  loading="lazy"
+                />
+              </a>
             ) : (
               <PlaceholderImage
                 src="/images/company/map-1.png"
-                label="公司位置示意图（可换成地图截图）"
+                label="公司位置示意图（配置 PUBLIC_AMAP_KEY 后自动显示高德地图）"
                 aspect="21/9"
               />
             )
@@ -151,9 +155,8 @@ const MAP_EMBED = '';
       </div>
 
       <p class="muted" style="margin-top: 20px; font-size: 13px" data-reveal>
-        小贴士：把地图 App 里的位置截图保存为
-        <code>public/images/company/map-1.png</code> 同名覆盖，即可替换这张示意图；如需可交互地图，申请高德
-        Key 后在 <code>contact.astro</code> 的 <code>MAP_EMBED</code> 填入嵌入地址。
+        地图由高德地图提供（坐标 {location}）。点击地图可跳转高德地图导航；如需替换为其他地图服务，
+        修改 <code>contact.astro</code> 顶部的 <code>mapImage</code> 生成逻辑即可。
       </p>
     </div>
   </section>

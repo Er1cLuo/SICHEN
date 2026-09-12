@@ -1719,11 +1719,20 @@ select {
   overflow: hidden;
 }
 
-.map-frame {
+.map-img {
   display: block;
   width: 100%;
-  aspect-ratio: 21 / 9;
-  border: 0;
+  height: auto;
+  transition: transform 0.8s var(--ease);
+}
+
+.map-card__media a {
+  display: block;
+  overflow: hidden;
+}
+
+.map-card__media a:hover .map-img {
+  transform: scale(1.03);
 }
 
 .map-card__body {

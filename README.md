@@ -80,6 +80,20 @@ npm run preview  # 本地预览构建产物
    ```
 3. 想用 B站 / YouTube / 腾讯视频嵌入，直接把 `<VideoPlaceholder />` 换成对应 iframe。
 
+### 公司位置地图
+
+「联系我们」页的**公司位置**区块使用高德**静态地图**（图片，加载快、无需前端 SDK），Key 通过环境变量注入：
+
+| 变量 | 说明 |
+|---|---|
+| `PUBLIC_AMAP_KEY` | 高德 **Web 服务** Key（[高德开放平台](https://lbs.amap.com/)申请，免费）；不配置则自动回退为位置示意图 |
+| `PUBLIC_AMAP_LOCATION` | 公司坐标（GCJ-02），默认 `113.414460,22.348405`（由高德地理编码反查"中山市三乡镇皇冠路"得到） |
+
+- **本地**：复制 `.env.example` 为 `.env` 填入 Key（`.env` 不进仓库）
+- **线上**：EdgeOne Pages → 项目设置 → 环境变量，添加同名变量后重新部署
+- 同时页面提供「高德地图导航 / 百度地图导航 / 复制地址」按钮，地址与坐标也写进了 JSON-LD（`PostalAddress` + `GeoCoordinates`），利于地图与本地搜索收录
+- 想换成可交互地图（可缩放拖拽）：改用高德 JS API 或地图组件 iframe，改 `src/pages/contact.astro` 顶部的 `mapImage` 逻辑即可
+
 ### 预览与构建
 
 ```bash
