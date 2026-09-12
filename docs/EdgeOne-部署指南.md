@@ -20,7 +20,7 @@ EdgeOne Pages 控制台 → 项目 →「项目设置 - 构建部署配置」：
 | 安装命令 | `npm install`（自动检测） | 仓库含 `package-lock.json`，npm 8/9/10 均支持 |
 | Node 版本 | `22.17.1` | 预装版本之一；根目录已有 `.nvmrc`（22.17.1），Pages 会按它自动切换 |
 
-环境变量：**不要**把 `COS_SECRET_ID` / `COS_SECRET_KEY` 填进来——这是静态站，构建不需要任何密钥。
+环境变量：**不需要**配置任何变量——这是纯静态站，构建过程不依赖任何密钥。
 
 ---
 
@@ -83,7 +83,7 @@ edgeone pages deploy ./dist -n sicen-hardware -e production -t $env:EDGEONE_API_
 1. EdgeOne Pages 项目 → **域名管理 → 自定义域名** → 添加 `www.sicenhardware.com`；
 2. 控制台会给出一个 **CNAME 目标地址**；
 3. 到 [DNSPod](https://console.dnspod.cn/) 修改解析：
-   - 若 `www` 之前已指向 COS，请**把那条 CNAME 的记录值改成 EdgeOne 的目标**（同一主机记录只能有一条 CNAME）；
+   - 若 `www` 已有其他 CNAME 记录（例如曾指向对象存储），请**把那条记录的值改成 EdgeOne 的目标**（同一主机记录只能有一条 CNAME）；
    - `sicenhardware.com`（裸域）建议用"显性 URL"301 跳到 `www`；
    - `sicenhardware.cn` 可单独再绑一次（备案通过的前提下）。
 4. **HTTPS**：域名管理 → HTTPS 配置 → **申请免费证书**（DNS 自动验证），签发后开启强制 HTTPS；
@@ -91,15 +91,18 @@ edgeone pages deploy ./dist -n sicen-hardware -e production -t $env:EDGEONE_API_
 
 ---
 
-## 六、EdgeOne Pages 与 COS 的关系
+## 六、上线前安全与运营勾选清单
 
-| 方案 | 特点 |
-|---|---|
-| COS 静态托管 | 便宜、文件直接可控；需自己绑域名/证书；已有 `npm run publish` 一键上传 |
-| **EdgeOne Pages** | 构建+部署+全球（含中国大陆）加速一体，自动 HTTPS，push 即上线 |
-| 两者并存 | 可让 EdgeOne Pages 作为主站（www），COS 保留为备份/图床；互不影响 |
-
-迁移后如果不再需要 COS，可在 COS 控制台清空并删除存储桶（保留 `scripts/upload.mjs` 与 `.env` 也无妨）。
+| 项目 | 建议 | 位置 |
+|---|---|---|
+| 强制 HTTPS 访问 | ✅ 必开 | 域名管理 → HTTPS 配置 |
+| 免费证书 + 自动续期 | ✅ 必开，上线后第一个月确认续期正常 | 同上 |
+| OCSP 装订 | ✅ 开（纯收益：TLS 握手更快） | EdgeOne 站点加速 → HTTPS |
+| HSTS | ⚠️ 缓开：先只开强制 HTTPS，稳定 1~2 周后再开，`max-age` 从 604800（7 天）起步；**不开** includeSubDomains、**不开** preload | EdgeOne 站点加速 → HTTPS |
+| TLS 最低版本 | 确认 ≥ 1.2 | EdgeOne SSL/TLS 安全等级 |
+| 页脚 ICP 备案号 + 链接工信部 | ✅ 法规要求 | 站点页脚（`Footer.astro`） |
+| 公安联网备案 | ✅ ICP 通过后 30 日内办理，通过后在页脚展示 | beian.mps.gov.cn |
+| 统计与收录 | 百度统计 + GA；sitemap 提交百度站长平台与 Google Search Console | — |
 
 ## 七、常见问题
 

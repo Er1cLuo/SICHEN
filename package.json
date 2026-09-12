@@ -8,8 +8,6 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "upload": "node scripts/upload.mjs",
-    "publish": "astro build && node scripts/upload.mjs",
     "deploy:edgeone": "edgeone pages deploy -n sicen-hardware",
     "deploy:edgeone:ci": "astro build && edgeone pages deploy ./dist -n sicen-hardware -e production"
   },
@@ -20,7 +18,6 @@
     "astro": "^5.7.0"
   },
   "devDependencies": {
-    "cos-nodejs-sdk-v5": "^3.0.0",
     "exceljs": "^4.4.0"
   },
   "main": "index.js",

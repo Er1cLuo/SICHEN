@@ -80,27 +80,29 @@ npm run preview  # 本地预览构建产物
    ```
 3. 想用 B站 / YouTube / 腾讯视频嵌入，直接把 `<VideoPlaceholder />` 换成对应 iframe。
 
-### 预览与发布
+### 预览与构建
 
 ```bash
 npm run dev       # 本地实时预览 http://localhost:4321（改完即时刷新）
-npm run publish   # 一键发布：自动构建 + 上传整个 dist 到 COS 桶（需先配置 .env）
-npm run upload    # 跳过构建，仅上传现有 dist
+npm run build     # 构建静态文件到 dist/
+npm run preview   # 本地预览构建产物
 ```
 
-发布前配置：复制 `.env.example` 为 `.env`，填入腾讯云密钥与桶信息（获取位置见 `.env.example` 注释）。
+## 部署：EdgeOne Pages（GitHub 自动部署）
 
-## 部署：腾讯云 COS 静态网站托管（本工程配套方案）
+本项目通过 GitHub 仓库 `Er1cLuo/SICHEN` 与腾讯云 EdgeOne Pages 联动：**push 即自动构建部署**，无需本地打包上传。
 
-流程简表（详细见对话记录）：
+| 配置项 | 值 |
+|---|---|
+| 框架预设 | `Astro` |
+| 根目录 | `./` |
+| 构建命令 | `npm run build` |
+| 输出目录 | `dist` |
+| Node 版本 | `22.17.1`（已由 `.nvmrc` 固定） |
 
-1. 本地执行 `npm run build`，得到 `dist/` 发布目录；
-2. 存储桶「基础配置 → 静态网站」开启，索引文档 `index.html`，错误文档 `404.html`；
-3. 「文件列表」把 `dist/` 内的全部内容（index.html、favicon.svg、_astro/、about/、products/、workshops/、contact/、images/、videos/）上传到桶**根目录**；或直接 `npm run publish` 一键自动上传；
-4. 桶访问权限需为「公有读私有写」；
-5. ⚠️ 大陆地域桶绑定自定义域名需先完成 **ICP 备案**（腾讯云备案需一台大陆地域轻量/CVM 服务器作为接入资源）；
-6. 备案通过后：域名与传输管理 → 绑定自定义域名（静态网站源站）→ DNSPod 添加 CNAME → 关联免费 SSL 证书强制 HTTPS；
-7. 提示：2024-01-01 之后新建的存储桶，默认域名直访已失效（403），必须走自定义域名。
+也可用 EdgeOne CLI 手动部署：`npm i -g edgeone && edgeone login`，然后 `npm run deploy:edgeone`。
+
+完整步骤（仓库导入、域名绑定、HTTPS、HSTS/OCSP 取舍、备案与排错）见 **`docs/EdgeOne-部署指南.md`**。
 
 ## 上线后建议
 
