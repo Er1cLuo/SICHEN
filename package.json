@@ -17,7 +17,6 @@
     "node": ">=20"
   },
   "dependencies": {
-    "@deepseek-ai/dsh": "^0.1.2-rc.1",
     "astro": "^5.7.0"
   },
   "devDependencies": {
