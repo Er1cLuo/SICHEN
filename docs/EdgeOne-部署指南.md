@@ -87,7 +87,7 @@ edgeone pages deploy ./dist -n sicen-hardware -e production -t $env:EDGEONE_API_
    - `sicenhardware.com`（裸域）建议用"显性 URL"301 跳到 `www`；
    - `sicenhardware.cn` 可单独再绑一次（备案通过的前提下）。
 4. **HTTPS**：域名管理 → HTTPS 配置 → **申请免费证书**（DNS 自动验证），签发后开启强制 HTTPS；
-5. 验证：`https://www.sicenhardware.com` 首页、`/about`、`/products`、`/news`、`/contact`，以及访问一个不存在的地址看是否显示自定义 404（`public/404.html` 已就绪）。
+5. 验证：`https://www.sicenhardware.com` 首页、`/about`、`/products`、`/workshops`、`/contact`，以及访问一个不存在的地址看是否显示自定义 404（`public/404.html` 已就绪）。
 
 ---
 

@@ -149,7 +149,7 @@ const THEME = {
   equipment: { bg: [18, 23, 28], accent: [150, 186, 200] },
   products: { bg: [26, 22, 17], accent: [200, 168, 120] },
   certificates: { bg: [20, 25, 21], accent: [166, 196, 168] },
-  news: { bg: [22, 22, 27], accent: [186, 186, 196] },
+  workshops: { bg: [20, 22, 26], accent: [176, 196, 210] },
 };
 
 /* ---------------- 生成清单：[路径, 宽, 高, 分类, 编号] ---------------- */
@@ -197,13 +197,19 @@ const files = [
   ['certificates/cert-4.png', 1200, 900, 'certificates', 4],
   ['certificates/cert-5.png', 1200, 900, 'certificates', 5],
   ['certificates/cert-6.png', 1200, 900, 'certificates', 6],
-  // 新闻配图 6 张
-  ['news/news-1.png', 1280, 720, 'news', 1],
-  ['news/news-2.png', 1280, 720, 'news', 2],
-  ['news/news-3.png', 1280, 720, 'news', 3],
-  ['news/news-4.png', 1280, 720, 'news', 4],
-  ['news/news-5.png', 1280, 720, 'news', 5],
-  ['news/news-6.png', 1280, 720, 'news', 6],
+  // 车间概貌：4 个车间 × 3 张（1 张大图 1600×900 + 2 张细节图 1200×900）
+  ['workshops/cold-heading-1.png', 1600, 900, 'workshops', 1],
+  ['workshops/cold-heading-2.png', 1200, 900, 'workshops', 2],
+  ['workshops/cold-heading-3.png', 1200, 900, 'workshops', 3],
+  ['workshops/cnc-1.png', 1600, 900, 'workshops', 1],
+  ['workshops/cnc-2.png', 1200, 900, 'workshops', 2],
+  ['workshops/cnc-3.png', 1200, 900, 'workshops', 3],
+  ['workshops/thread-rolling-1.png', 1600, 900, 'workshops', 1],
+  ['workshops/thread-rolling-2.png', 1200, 900, 'workshops', 2],
+  ['workshops/thread-rolling-3.png', 1200, 900, 'workshops', 3],
+  ['workshops/optical-sorting-1.png', 1600, 900, 'workshops', 1],
+  ['workshops/optical-sorting-2.png', 1200, 900, 'workshops', 2],
+  ['workshops/optical-sorting-3.png', 1200, 900, 'workshops', 3],
 ];
 
 let total = 0;

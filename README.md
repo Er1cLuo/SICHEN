@@ -25,7 +25,7 @@ npm run preview  # 本地预览构建产物
 │   ├── components/          # 组件：页头/页脚/占位图/卡片等
 │   ├── layouts/
 │   │   └── Layout.astro     # 全站布局（SEO/JSON-LD/导航/页脚）
-│   ├── pages/               # 5 个页面（index/about/products/news/contact）
+│   ├── pages/               # 5 个页面（index/about/products/workshops/contact）
 │   └── styles/
 │       └── global.css       # 全站设计系统
 ├── astro.config.mjs
@@ -42,7 +42,7 @@ npm run preview  # 本地预览构建产物
 | `Footer.astro` / `contact.astro` | 地址、电话、邮箱 | 目前为占位信息 |
 | `Layout.astro` | JSON-LD 中的域名/邮箱 | 上线后替换为正式域名 |
 | `astro.config.mjs` | `site` 字段 | 换成正式域名 |
-| `index.astro` 新闻条目 | 真实新闻 | 如需详情页，新建 `src/pages/news/[slug].astro` |
+| `workshops.astro` 车间描述与参数 | 四大车间的真实描述、设备与产能参数 | 图片按同名文件覆盖即可 |
 
 ## 日常维护：改文字 / 加图片视频 / 发布
 
@@ -53,14 +53,14 @@ npm run preview  # 本地预览构建产物
 | 导航菜单、顶部 logo 文案 | `src/components/Header.astro` |
 | 页脚简介、地址/电话/版权行 | `src/components/Footer.astro` |
 | 全站标题、SEO 描述、站点信息 | `src/layouts/Layout.astro` |
-| 首页各区块与新闻/数据列表 | `src/pages/index.astro` |
+| 首页各区块、数据统计、车间卡片 | `src/pages/index.astro` |
 | 关于我们（简介/理念/历程/资质） | `src/pages/about.astro` |
-| 产品中心（产品卡片/流程） | `src/pages/products.astro` |
-| 新闻资讯（头条+列表） | `src/pages/news.astro` |
+| 产品中心（产品卡片/流程/图集） | `src/pages/products.astro` |
+| 车间概貌（冷镦/CNC/搓牙/光学筛选四大车间） | `src/pages/workshops.astro` |
 | 联系我们（地址/电话/留言表单） | `src/pages/contact.astro` |
 | 全站配色/字体/间距 | `src/styles/global.css`（顶部 `:root` 变量） |
 
-**规律**：每个页面文件顶部 `---` 之间的数组（如 `stats`、`businesses`、`news`、`timeline`、`products`、`contactItems`）就是列表数据——想增删卡片/条目就在这里改；`---` 以下的正文 HTML 是页面里的段落文案。
+**规律**：每个页面文件顶部 `---` 之间的数组（如 `stats`、`businesses`、`workshops`、`timeline`、`products`、`contactItems`）就是列表数据——想增删卡片/条目就在这里改；`---` 以下的正文 HTML 是页面里的段落文案。
 
 ### 加图片
 
@@ -96,7 +96,7 @@ npm run upload    # 跳过构建，仅上传现有 dist
 
 1. 本地执行 `npm run build`，得到 `dist/` 发布目录；
 2. 存储桶「基础配置 → 静态网站」开启，索引文档 `index.html`，错误文档 `404.html`；
-3. 「文件列表」把 `dist/` 内的全部内容（index.html、favicon.svg、_astro/、about/、products/、news/、contact/）上传到桶**根目录**；或直接 `npm run publish` 一键自动上传；
+3. 「文件列表」把 `dist/` 内的全部内容（index.html、favicon.svg、_astro/、about/、products/、workshops/、contact/、images/、videos/）上传到桶**根目录**；或直接 `npm run publish` 一键自动上传；
 4. 桶访问权限需为「公有读私有写」；
 5. ⚠️ 大陆地域桶绑定自定义域名需先完成 **ICP 备案**（腾讯云备案需一台大陆地域轻量/CVM 服务器作为接入资源）；
 6. 备案通过后：域名与传输管理 → 绑定自定义域名（静态网站源站）→ DNSPod 添加 CNAME → 关联免费 SSL 证书强制 HTTPS；

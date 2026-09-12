@@ -4,10 +4,9 @@ import SectionHeading from '../components/SectionHeading.astro';
 import PlaceholderImage from '../components/PlaceholderImage.astro';
 import VideoPlaceholder from '../components/VideoPlaceholder.astro';
 import ProductCard from '../components/ProductCard.astro';
-import NewsCard from '../components/NewsCard.astro';
 import Carousel from '../components/Carousel.astro';
 
-// 提示：以下为演示内容。统计数据、新闻为占位，图片为演示图，上线前请替换为真实数据与实拍图。
+// 提示：以下为演示内容。统计数据与文案为占位，图片为占位图（同名覆盖即可）。
 const stats = [
   { num: '15', suffix: '+', label: '年行业深耕' },
   { num: '500', suffix: '+', label: '服务客户' },
@@ -42,27 +41,36 @@ const businesses = [
   },
 ];
 
-const news = [
+// 车间概貌（首页展示 4 个车间，详情见 /workshops）
+// 图片：每个车间 3 张，这里用第 1 张（大图）；占位图左上角方块数=序号
+const workshops = [
   {
-    title: '思晨五金通过 ISO9001 质量管理体系年度审核',
-    date: '2025-06-18',
-    category: '企业新闻',
-    excerpt: '质量管理体系的持续有效运行，为公司稳定交付与品质管控提供了坚实保障。',
-    src: '/images/news/news-1.png',
+    id: 'cold-heading',
+    eyebrow: 'COLD HEADING',
+    title: '冷镦车间',
+    summary: '多工位冷镦一次成型，材料利用率高、强度好，适合螺栓螺母与异形件的批量生产。',
+    src: '/images/workshops/cold-heading-1.png',
   },
   {
-    title: '公司精密冲压自动化产线完成升级改造',
-    date: '2025-05-30',
-    category: '企业新闻',
-    excerpt: '自动化程度与生产效率进一步提升，更好地满足客户对交期与品质的双重要求。',
-    src: '/images/news/news-2.png',
+    id: 'cnc',
+    eyebrow: 'CNC MACHINING',
+    title: 'CNC 车间',
+    summary: '数控车床与加工中心，支持车铣复合加工，精度可达 ±0.01 mm。',
+    src: '/images/workshops/cnc-1.png',
   },
   {
-    title: '2025 上半年五金行业景气度观察',
-    date: '2025-05-12',
-    category: '行业动态',
-    excerpt: '下游需求稳步回暖，精密五金向智能化、绿色化方向持续演进。',
-    src: '/images/news/news-3.png',
+    id: 'thread-rolling',
+    eyebrow: 'THREAD ROLLING',
+    title: '搓牙车间',
+    summary: '螺纹滚压成型，牙型饱满、表面光洁，螺纹强度优于切削加工。',
+    src: '/images/workshops/thread-rolling-1.png',
+  },
+  {
+    id: 'optical-sorting',
+    eyebrow: 'OPTICAL SORTING',
+    title: '光学筛选车间',
+    summary: '光学影像全检，自动剔除尺寸超差、混料、毛刺等不良品。',
+    src: '/images/workshops/optical-sorting-1.png',
   },
 ];
 
@@ -209,23 +217,31 @@ const overviewSlides = [
     </div>
   </section>
 
-  <!-- ======== 新闻动态 ======== -->
+  <!-- ======== 车间概貌 ======== -->
   <section class="section section--alt section--line">
     <div class="container">
       <div style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 24px">
-        <SectionHeading eyebrow="NEWS & INSIGHTS" title="新闻动态" />
-        <a class="btn btn--ghost btn--sm" href="/news" data-reveal>查看全部 →</a>
+        <SectionHeading
+          eyebrow="OUR WORKSHOPS"
+          title="车间概貌"
+          desc="冷镦、CNC、搓牙、光学筛选四大车间，覆盖从毛坯成型到全检出货的完整工序。"
+        />
+        <a class="btn btn--ghost btn--sm" href="/workshops" data-reveal>查看全部车间 →</a>
       </div>
-      <div class="news-grid" style="margin-top: 44px">
+      <div class="shop-grid" style="margin-top: 48px">
         {
-          news.map((item) => (
-            <NewsCard
-              title={item.title}
-              date={item.date}
-              category={item.category}
-              excerpt={item.excerpt}
-              src={item.src}
-            />
+          workshops.map((item) => (
+            <a class="shop-card" href={`/workshops#${item.id}`} data-reveal>
+              <div class="shop-card__media">
+                <PlaceholderImage src={item.src} label={item.title} aspect="16/9" />
+              </div>
+              <div class="shop-card__body">
+                <p class="eyebrow">{item.eyebrow}</p>
+                <h3 class="shop-card__title">{item.title}</h3>
+                <p class="shop-card__desc">{item.summary}</p>
+                <span class="card__link">查看车间 <span aria-hidden="true">→</span></span>
+              </div>
+            </a>
           ))
         }
       </div>

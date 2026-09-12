@@ -1,0 +1,151 @@
+---
+import Layout from '../layouts/Layout.astro';
+import SectionHeading from '../components/SectionHeading.astro';
+import PlaceholderImage from '../components/PlaceholderImage.astro';
+
+/**
+ * 车间概貌：四大车间
+ * 图片占位说明：每个车间 3 张（1 张 1600×900 大图 + 2 张 1200×900 细节图）
+ * 占位图左上角小方块数 = 该车间内的第几张（1 = 大图，2/3 = 细节图）
+ * 替换方式：把真实照片按同名放入 public/images/workshops/ 覆盖即可
+ */
+const workshops = [
+  {
+    id: 'cold-heading',
+    eyebrow: 'COLD HEADING WORKSHOP',
+    title: '冷镦车间',
+    desc: '采用多工位冷镦成型工艺，从盘料一次成型螺栓、螺母及各类异形件。材料利用率高、生产效率快，金属流线连续不断，产品强度与一致性明显优于切削加工。',
+    specs: [
+      ['主要设备', '多工位冷镦机 12 台（占位）'],
+      ['加工范围', 'M3 ~ M16、异形件（占位）'],
+      ['日产能', '约 80 万件（占位）'],
+      ['品质管控', '在线尺寸检测 + 首件确认（占位）'],
+    ],
+    images: [
+      '/images/workshops/cold-heading-1.png',
+      '/images/workshops/cold-heading-2.png',
+      '/images/workshops/cold-heading-3.png',
+    ],
+  },
+  {
+    id: 'cnc',
+    eyebrow: 'CNC MACHINING WORKSHOP',
+    title: 'CNC 车间',
+    desc: '配置数控车床与加工中心，支持车铣复合加工，适合结构复杂、公差要求严格的产品；小批量多品种与批量订单均可灵活承接。',
+    specs: [
+      ['主要设备', '数控车床 / 加工中心 20 台（占位）'],
+      ['加工精度', '±0.01 mm（占位）'],
+      ['适用材质', '碳钢、不锈钢、铝、铜（占位）'],
+      ['交付形式', '打样 + 批量交付（占位）'],
+    ],
+    images: [
+      '/images/workshops/cnc-1.png',
+      '/images/workshops/cnc-2.png',
+      '/images/workshops/cnc-3.png',
+    ],
+  },
+  {
+    id: 'thread-rolling',
+    eyebrow: 'THREAD ROLLING WORKSHOP',
+    title: '搓牙车间',
+    desc: '通过搓丝机对工件进行螺纹滚压成型，牙型饱满、表面光洁，螺纹强度较切削加工显著提升，适合大批量标准紧固件的稳定生产。',
+    specs: [
+      ['主要设备', '平板搓丝机 / 行星搓丝机（占位）'],
+      ['螺纹范围', 'M2 ~ M20（占位）'],
+      ['日产能', '约 120 万件（占位）'],
+      ['检测方式', '通止规全检 + 抽检（占位）'],
+    ],
+    images: [
+      '/images/workshops/thread-rolling-1.png',
+      '/images/workshops/thread-rolling-2.png',
+      '/images/workshops/thread-rolling-3.png',
+    ],
+  },
+  {
+    id: 'optical-sorting',
+    eyebrow: 'OPTICAL SORTING WORKSHOP',
+    title: '光学筛选车间',
+    desc: '采用光学影像筛选设备对产品进行全检，自动剔除尺寸超差、混料、毛刺、缺料等不良品，为出货品质提供最后一道保障。',
+    specs: [
+      ['主要设备', '光学影像筛选机 6 台（占位）'],
+      ['筛选项目', '外径 / 长度 / 螺纹 / 外观（占位）'],
+      ['筛选速度', '约 1200 件 / 分钟（占位）'],
+      ['质量目标', '不良流出率 ≤ 100 ppm（占位）'],
+    ],
+    images: [
+      '/images/workshops/optical-sorting-1.png',
+      '/images/workshops/optical-sorting-2.png',
+      '/images/workshops/optical-sorting-3.png',
+    ],
+  },
+];
+---
+
+<Layout
+  title="车间概貌"
+  description="思晨五金车间概貌——冷镦车间、CNC 车间、搓牙车间、光学筛选车间，覆盖从成型到全检的完整五金制造工序。"
+>
+
+  <section class="page-hero">
+    <div class="container">
+      <p class="eyebrow" data-reveal>OUR WORKSHOPS</p>
+      <h1 class="page-hero__title" data-reveal>车间概貌</h1>
+      <p class="page-hero__desc" data-reveal>
+        冷镦、CNC、搓牙、光学筛选四大车间，覆盖从毛坯成型、精密加工到全检出货的完整工序。
+      </p>
+      <nav class="anchor-nav" aria-label="车间导航">
+        {
+          workshops.map((w) => (
+            <a class="anchor-pill" href={`#${w.id}`}>
+              {w.title}
+            </a>
+          ))
+        }
+      </nav>
+    </div>
+  </section>
+
+  {
+    workshops.map((w, i) => (
+      <section class:list={['section', { 'section--alt': i % 2 === 1 }]} id={w.id}>
+        <div class="container">
+          <div class:list={['split', 'split--lg', { 'split--reverse': i % 2 === 1 }]}>
+            <div class="split__body">
+              <p class="eyebrow" data-reveal>{w.eyebrow}</p>
+              <h2 class="h-section" data-reveal>{w.title}</h2>
+              <p class="lead" data-reveal style="margin-top: 22px">{w.desc}</p>
+              <ul class="spec-list" data-reveal>
+                {w.specs.map(([label, value]) => (
+                  <li>
+                    <span>{label}</span>
+                    <span>{value}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div class="split__media">
+              <PlaceholderImage src={w.images[0]} label={`${w.title} · 全景`} aspect="16/9" />
+            </div>
+          </div>
+
+          <div class="gallery-grid gallery-grid--2" style="margin-top: 1px">
+            {w.images.slice(1).map((src, k) => (
+              <div class="gallery-item" data-reveal>
+                <PlaceholderImage src={src} label={`${w.title} · 细节 ${k + 1}`} aspect="16/9" />
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+    ))
+  }
+
+  <section class="cta-band section section--tight">
+    <div class="container cta-band__inner">
+      <h2 class="cta-band__title" data-reveal>欢迎实地考察我们的产线</h2>
+      <p class="muted" data-reveal>如需了解设备清单、产能排期或安排样品试制，欢迎随时联系我们。</p>
+      <a class="btn btn--solid" href="/contact" data-reveal>联系我们</a>
+    </div>
+  </section>
+
+</Layout>
