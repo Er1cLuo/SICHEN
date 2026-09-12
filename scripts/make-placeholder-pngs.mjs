@@ -143,6 +143,67 @@ function drawFlat(w, h, bg, accent, badge) {
   return px;
 }
 
+/* ---------------- 地图风格占位（公司位置示意图） ---------------- */
+function drawMap(w, h, bg, accent) {
+  const px = Buffer.alloc(w * h * 4);
+  const fill = (x0, y0, x1, y1, [r, g, b], a = 255) => {
+    for (let y = Math.max(0, Math.round(y0)); y < Math.min(h, Math.round(y1)); y++) {
+      for (let x = Math.max(0, Math.round(x0)); x < Math.min(w, Math.round(x1)); x++) {
+        const i = (y * w + x) * 4;
+        if (a >= 255) {
+          px[i] = r;
+          px[i + 1] = g;
+          px[i + 2] = b;
+          px[i + 3] = 255;
+        } else {
+          px[i] = Math.round(px[i] * (1 - a / 255) + r * (a / 255));
+          px[i + 1] = Math.round(px[i + 1] * (1 - a / 255) + g * (a / 255));
+          px[i + 2] = Math.round(px[i + 2] * (1 - a / 255) + b * (a / 255));
+          px[i + 3] = 255;
+        }
+      }
+    }
+  };
+
+  fill(0, 0, w, h, bg);
+  // 细网格（街区）
+  for (let x = 0; x < w; x += 80) fill(x, 0, x + 1, h, [58, 64, 72], 120);
+  for (let y = 0; y < h; y += 80) fill(0, y, w, y + 1, [58, 64, 72], 120);
+  // 地块
+  fill(w * 0.05, h * 0.08, w * 0.28, h * 0.36, [34, 38, 44]);
+  fill(w * 0.42, h * 0.54, w * 0.66, h * 0.7, [34, 38, 44]);
+  fill(w * 0.76, h * 0.14, w * 0.94, h * 0.34, [34, 38, 44]);
+  // 道路
+  fill(0, h * 0.42, w, h * 0.42 + 7, [96, 106, 118]);
+  fill(w * 0.34, 0, w * 0.34 + 7, h, [96, 106, 118]);
+  fill(0, h * 0.74, w, h * 0.74 + 4, [74, 82, 92]);
+  fill(w * 0.72, 0, w * 0.72 + 4, h, [74, 82, 92]);
+
+  const cx = Math.round(w * 0.5);
+  const cy = Math.round(h * 0.5);
+  // 脉冲圈
+  for (let y = -90; y <= 90; y++) {
+    for (let x = -90; x <= 90; x++) {
+      const d = Math.hypot(x, y);
+      if (d > 78 && d <= 83) fill(cx + x, cy + y, cx + x + 1, cy + y + 1, accent, 130);
+    }
+  }
+  // 定位标记：圆头 + 尖尾
+  const headR = Math.max(16, Math.round(Math.min(w, h) * 0.045));
+  const headY = cy - Math.round(headR * 0.9);
+  for (let y = -headR; y <= headR; y++) {
+    for (let x = -headR; x <= headR; x++) {
+      if (Math.hypot(x, y) <= headR) fill(cx + x, headY + y, cx + x + 1, headY + y + 1, accent);
+    }
+  }
+  const tail = headR * 2;
+  for (let k = 0; k < tail; k++) {
+    const half = Math.round((1 - k / tail) * headR * 0.85);
+    fill(cx - half, headY + headR - 2 + k, cx + half, headY + headR - 1 + k, accent);
+  }
+  return px;
+}
+
 /* ---------------- 配色（按分类） ---------------- */
 const THEME = {
   company: { bg: [22, 22, 27], accent: [214, 214, 208] },
@@ -150,6 +211,7 @@ const THEME = {
   products: { bg: [26, 22, 17], accent: [200, 168, 120] },
   certificates: { bg: [20, 25, 21], accent: [166, 196, 168] },
   workshops: { bg: [20, 22, 26], accent: [176, 196, 210] },
+  map: { bg: [18, 20, 24], accent: [214, 96, 92] },
 };
 
 /* ---------------- 生成清单：[路径, 宽, 高, 分类, 编号] ---------------- */
@@ -162,6 +224,7 @@ const files = [
   ['company/facade.png', 1200, 900, 'company', 0],
   ['company/office-1.png', 1200, 900, 'company', 0],
   ['company/team-1.png', 1200, 900, 'company', 0],
+  ['company/map-1.png', 1920, 800, 'map', 0],
   // 器械设备
   ['equipment/hero.png', 1920, 1080, 'equipment', 0],
   ['equipment/workshop-1.png', 1600, 900, 'equipment', 0],
@@ -217,7 +280,11 @@ for (const [rel, w, h, cat, badge] of files) {
   const { bg, accent } = THEME[cat];
   const filePath = path.join(BASE, rel);
   fs.mkdirSync(path.dirname(filePath), { recursive: true });
-  const buf = encodePng(w, h, drawFlat(w, h, bg, accent, badge));
+  const buf = encodePng(
+    w,
+    h,
+    cat === 'map' ? drawMap(w, h, bg, accent) : drawFlat(w, h, bg, accent, badge)
+  );
   fs.writeFileSync(filePath, buf);
   total += buf.length;
   console.log(

@@ -1706,6 +1706,62 @@ select {
 }
 
 /* ==========================================================================
+   公司位置（地图卡）
+   ========================================================================== */
+.map-card {
+  border: 1px solid var(--line);
+  background: var(--bg);
+  overflow: hidden;
+}
+
+.map-card__media {
+  position: relative;
+  overflow: hidden;
+}
+
+.map-frame {
+  display: block;
+  width: 100%;
+  aspect-ratio: 21 / 9;
+  border: 0;
+}
+
+.map-card__body {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 28px 32px;
+  border-top: 1px solid var(--line);
+}
+
+.map-card__info {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.map-card__label {
+  font-size: 11px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+
+.map-card__address {
+  font-size: 17px;
+  letter-spacing: 0.04em;
+  line-height: 1.7;
+}
+
+.map-card__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+/* ==========================================================================
    响应式
    ========================================================================== */
 @media (max-width: 1080px) {
