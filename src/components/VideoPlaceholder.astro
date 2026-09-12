@@ -1,0 +1,39 @@
+---
+/**
+ * 视频组件（占位 / 真实视频都支持）。
+ *
+ * 真实视频到位后，给 src 即可（封面 poster 可选）：
+ *   <VideoPlaceholder src="/videos/brand.mp4" poster="/images/poster.jpg" label="品牌视频" />
+ * 视频文件请放入 public/videos/ 目录（构建时自动复制到站点 /videos/ 路径）。
+ *
+ * 也可以直接替换为视频平台嵌入（Bilibili / YouTube / 腾讯视频 iframe）。
+ */
+interface Props {
+  label?: string;
+  hint?: string;
+  /** 真实视频地址，例如 /videos/brand.mp4 */
+  src?: string;
+  /** 封面图地址（可选） */
+  poster?: string;
+}
+
+const { label = '品牌视频 · 占位', hint = '建议 1080P · MP4 (H.264)，或替换为视频平台嵌入', src, poster } =
+  Astro.props;
+---
+
+<div class:list={['video-ph', { 'video-ph--live': !!src }]} data-reveal>
+  {
+    src ? (
+      <video controls preload="metadata" poster={poster} aria-label={label}>
+        <source src={src} />
+        您的浏览器不支持 HTML5 视频播放。
+      </video>
+    ) : (
+      <>
+        <button class="video-ph__play" type="button" aria-label="播放视频（占位）"></button>
+        <span class="video-ph__label">{label}</span>
+        <span class="video-ph__hint">{hint}</span>
+      </>
+    )
+  }
+</div>

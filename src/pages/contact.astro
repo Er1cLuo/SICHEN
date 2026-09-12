@@ -1,0 +1,100 @@
+---
+import Layout from '../layouts/Layout.astro';
+import SectionHeading from '../components/SectionHeading.astro';
+import PlaceholderImage from '../components/PlaceholderImage.astro';
+
+// 提示：以下联系方式均为占位，上线前请替换为真实信息。
+const contactItems = [
+  { label: '公司地址', value: '广东省 XXXXX 工业园区 XX 号（占位）' },
+  { label: '联系电话', value: '+86 0757-XXXX-XXXX（占位）' },
+  { label: '电子邮箱', value: 'info@sicen-hardware.com（占位）' },
+  { label: '工作时间', value: '周一至周六 8:30 – 18:00' },
+];
+---
+
+<Layout title="联系我们" description="联系思晨五金制品有限公司——欢迎咨询产品、询价与合作。">
+
+  <section class="page-hero">
+    <div class="container">
+      <p class="eyebrow" data-reveal>CONTACT US</p>
+      <h1 class="page-hero__title" data-reveal>联系我们</h1>
+      <p class="page-hero__desc" data-reveal>
+        无论是产品询价、定制开发还是商务合作，欢迎随时与我们取得联系。
+      </p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="contact-grid">
+        <div>
+          <SectionHeading eyebrow="GET IN TOUCH" title="联系方式" />
+          <ul class="info-list" style="margin-top: 36px">
+            {
+              contactItems.map((item) => (
+                <li class="info-item" data-reveal>
+                  <span class="info-item__label">{item.label}</span>
+                  <span class="info-item__value">{item.value}</span>
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+
+        <div>
+          <SectionHeading eyebrow="SEND MESSAGE" title="在线留言" />
+          <form class="form" id="contactForm" style="margin-top: 36px" data-reveal>
+            <div class="form__row">
+              <div class="field">
+                <label for="name">姓名 *</label>
+                <input id="name" name="name" type="text" placeholder="您的姓名" required />
+              </div>
+              <div class="field">
+                <label for="company">公司</label>
+                <input id="company" name="company" type="text" placeholder="公司名称" />
+              </div>
+            </div>
+            <div class="form__row">
+              <div class="field">
+                <label for="phone">电话</label>
+                <input id="phone" name="phone" type="tel" placeholder="联系电话" />
+              </div>
+              <div class="field">
+                <label for="email">邮箱 *</label>
+                <input id="email" name="email" type="email" placeholder="电子邮箱" required />
+              </div>
+            </div>
+            <div class="field">
+              <label for="message">留言内容 *</label>
+              <textarea id="message" name="message" placeholder="请描述您的需求，例如产品、数量、材质要求……" required></textarea>
+            </div>
+            <button class="btn btn--solid" type="submit">发送留言</button>
+            <p class="form__note" style="margin-top: 14px">
+              （演示占位表单，尚未接入后端；上线后可对接邮件或表单服务）
+            </p>
+            <p class="form__success" id="formSuccess">✓ 留言已记录（占位）。上线后请接入真实后端或邮件通知。</p>
+          </form>
+        </div>
+      </div>
+
+      <div style="margin-top: 72px">
+        <SectionHeading eyebrow="LOCATION" title="公司位置" desc="地图占位——上线后可替换为高德 / 腾讯地图 iframe 嵌入。" align="center" />
+        <div style="margin-top: 40px">
+          <PlaceholderImage label="公司位置 · 地图占位" aspect="21/9" />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    const form = document.getElementById('contactForm');
+    form?.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const success = document.getElementById('formSuccess');
+      success?.classList.add('show');
+      form.reset();
+      setTimeout(() => success?.classList.remove('show'), 6000);
+    });
+  </script>
+
+</Layout>

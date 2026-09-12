@@ -1,0 +1,92 @@
+---
+/**
+ * 占位图组件（支持真实图片）。
+ *
+ * 真实图片到位后两种用法：
+ *   1) 推荐：继续使用本组件，加 src 即可（布局/圆角/裁剪完全不变）：
+ *      <PlaceholderImage src="/images/factory.jpg" label="公司环境" aspect="4/3" />
+ *   2) 或直接换成 <img>：
+ *      <img src="/images/factory.jpg" alt="公司环境" style="width:100%; aspect-ratio:4/3; object-fit:cover" />
+ *
+ * 图片文件请放入 public/images/ 目录（构建时自动复制到站点 /images/ 路径）。
+ */
+interface Props {
+  label: string;
+  sub?: string;
+  aspect?: '21/9' | '16/9' | '3/2' | '4/3' | '1/1';
+  fill?: boolean;
+  /** 真实图片地址，例如 /images/factory.jpg */
+  src?: string;
+  /** 图片 alt 文案，缺省用 label */
+  alt?: string;
+}
+
+const { label, sub, aspect = '16/9', fill = false, src, alt } = Astro.props;
+
+const ratioStyle = fill ? undefined : { aspectRatio: aspect };
+
+// 每个实例独立的渐变 ID，避免页面内 ID 冲突（仅占位模式需要）
+const uid = 'ph' + Math.random().toString(36).slice(2, 8);
+const glowId = `${uid}-glow`;
+const gridId = `${uid}-grid`;
+---
+
+<div
+  class:list={['ph', { 'ph--fill': fill }]}
+  style={ratioStyle}
+  data-reveal
+>
+  {
+    src ? (
+      <img
+        class="ph__img"
+        src={src}
+        alt={alt ?? label}
+        loading="lazy"
+      />
+    ) : (
+      <>
+        <svg
+          class="ph__svg"
+          viewBox="0 0 800 450"
+          preserveAspectRatio="xMidYMid slice"
+          role="img"
+          aria-label={`${label}（占位图）`}
+        >
+          <defs>
+            <radialGradient id={glowId} cx="28%" cy="18%" r="95%">
+              <stop offset="0%" stop-color="#202026" />
+              <stop offset="52%" stop-color="#121216" />
+              <stop offset="100%" stop-color="#0b0b0d" />
+            </radialGradient>
+            <pattern id={gridId} width="64" height="64" patternUnits="userSpaceOnUse">
+              <path
+                d="M64 0H0V64"
+                fill="none"
+                stroke="rgba(255,255,255,0.045)"
+                stroke-width="1"
+              />
+            </pattern>
+          </defs>
+          <rect width="800" height="450" fill={`url(#${glowId})`} />
+          <rect width="800" height="450" fill={`url(#${gridId})`} />
+          <circle cx="400" cy="225" r="158" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="1" />
+          <circle cx="400" cy="225" r="100" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="1" />
+          <circle cx="400" cy="225" r="42" fill="none" stroke="rgba(255,255,255,0.10)" stroke-width="1" />
+          <text
+            x="400"
+            y="242"
+            text-anchor="middle"
+            font-size="64"
+            letter-spacing="16"
+            fill="rgba(255,255,255,0.09)"
+            font-family="'Helvetica Neue', Arial, sans-serif"
+          >SC</text>
+        </svg>
+        <span class="ph__tag">IMAGE PLACEHOLDER</span>
+        <span class="ph__label">{label}</span>
+        {sub && <span class="ph__sub">{sub}</span>}
+      </>
+    )
+  }
+</div>

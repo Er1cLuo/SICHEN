@@ -1,0 +1,31 @@
+{
+  "name": "sicen-hardware-website",
+  "type": "module",
+  "version": "1.0.0",
+  "private": true,
+  "description": "思晨五金制品有限公司 企业官网（Astro 静态站点）",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "upload": "node scripts/upload.mjs",
+    "publish": "astro build && node scripts/upload.mjs",
+    "deploy:edgeone": "edgeone pages deploy -n sicen-hardware",
+    "deploy:edgeone:ci": "astro build && edgeone pages deploy ./dist -n sicen-hardware -e production"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@deepseek-ai/dsh": "^0.1.2-rc.1",
+    "astro": "^5.7.0"
+  },
+  "devDependencies": {
+    "cos-nodejs-sdk-v5": "^3.0.0",
+    "exceljs": "^4.4.0"
+  },
+  "main": "index.js",
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

@@ -1,0 +1,244 @@
+---
+import Layout from '../layouts/Layout.astro';
+import SectionHeading from '../components/SectionHeading.astro';
+import PlaceholderImage from '../components/PlaceholderImage.astro';
+import VideoPlaceholder from '../components/VideoPlaceholder.astro';
+import ProductCard from '../components/ProductCard.astro';
+import NewsCard from '../components/NewsCard.astro';
+import Carousel from '../components/Carousel.astro';
+
+// 提示：以下为演示内容。统计数据、新闻为占位，图片为演示图，上线前请替换为真实数据与实拍图。
+const stats = [
+  { num: '15', suffix: '+', label: '年行业深耕' },
+  { num: '500', suffix: '+', label: '服务客户' },
+  { num: '30', suffix: '+', label: '出口国家与地区' },
+  { num: '98.5', suffix: '%', label: '一次交验合格率' },
+];
+
+const businesses = [
+  {
+    title: '精密冲压件',
+    desc: '高精度连续模冲压，支持多工位成型，广泛应用于家电、汽车与电子行业。',
+    tag: 'STAMPING',
+    src: '/images/products/stamping-1.png',
+  },
+  {
+    title: '精密机加工件',
+    desc: 'CNC 车铣复合加工，尺寸公差稳定，满足小批量到大批量灵活交付。',
+    tag: 'MACHINING',
+    src: '/images/products/machining-1.png',
+  },
+  {
+    title: '紧固件与连接件',
+    desc: '螺丝、螺母、铆钉等标准与非标紧固件，材质与表面处理可按需定制。',
+    tag: 'FASTENERS',
+    src: '/images/products/fasteners-1.png',
+  },
+  {
+    title: '钣金与表面处理',
+    desc: '钣金折弯、焊接与电镀、氧化等表面处理一站式配套服务。',
+    tag: 'FINISHING',
+    src: '/images/products/finishing-1.png',
+  },
+];
+
+const news = [
+  {
+    title: '思晨五金通过 ISO9001 质量管理体系年度审核',
+    date: '2025-06-18',
+    category: '企业新闻',
+    excerpt: '质量管理体系的持续有效运行，为公司稳定交付与品质管控提供了坚实保障。',
+    src: '/images/news/news-1.png',
+  },
+  {
+    title: '公司精密冲压自动化产线完成升级改造',
+    date: '2025-05-30',
+    category: '企业新闻',
+    excerpt: '自动化程度与生产效率进一步提升，更好地满足客户对交期与品质的双重要求。',
+    src: '/images/news/news-2.png',
+  },
+  {
+    title: '2025 上半年五金行业景气度观察',
+    date: '2025-05-12',
+    category: '行业动态',
+    excerpt: '下游需求稳步回暖，精密五金向智能化、绿色化方向持续演进。',
+    src: '/images/news/news-3.png',
+  },
+];
+
+// 公司概貌轮播图（4 张）——占位图左上角的小方块个数就是序号：slider-1 ~ slider-4
+const overviewSlides = [
+  { src: '/images/company/slider-1.png', alt: '公司厂区外景', caption: '厂区外景' },
+  { src: '/images/company/slider-2.png', alt: '生产车间全景', caption: '生产车间' },
+  { src: '/images/company/slider-3.png', alt: '办公与产品展厅', caption: '办公与展厅' },
+  { src: '/images/company/slider-4.png', alt: '团队与品质管理', caption: '团队与品质' },
+];
+---
+
+<Layout
+  title="思晨五金制品有限公司 · 精密五金制造"
+  description="思晨五金制品有限公司——精密冲压件、精密CNC加工件、紧固件、钣金件等五金制品研发、制造与交付，服务全球工业客户。"
+>
+
+  <!-- ======== 首屏 ======== -->
+  <section class="hero">
+    <div class="hero__media">
+      <!-- 首屏大图：真实图放到 public/images/equipment/hero.png 同名覆盖即可 -->
+      <PlaceholderImage src="/images/equipment/hero.png" label="首屏主视觉" fill />
+    </div>
+    <div class="hero__overlay" aria-hidden="true"></div>
+
+    <div class="container hero__content">
+      <p class="eyebrow" data-reveal>SICEN HARDWARE · 思晨五金</p>
+      <h1 class="hero__title" data-reveal>
+        以精密之心<br />铸工业之<em>美</em>
+      </h1>
+      <!-- 演示：这段是正文文字，可直接编辑 -->
+      <p class="hero__desc" data-reveal>
+        思晨五金制品有限公司，专注精密冲压件、CNC 机加工件、紧固件等五金制品的
+        研发、制造与交付。以严谨工艺、稳定品质与可靠交期，服务全球工业客户。
+      </p>
+      <div class="hero__actions" data-reveal>
+        <a class="btn btn--solid" href="/products">浏览产品</a>
+        <a class="btn btn--ghost" href="/about">了解思晨</a>
+      </div>
+    </div>
+
+    <span class="hero__scroll" aria-hidden="true">SCROLL</span>
+  </section>
+
+  <!-- ======== 公司简介 ======== -->
+  <section class="section">
+    <div class="container">
+      <div class="split">
+        <div class="split__body">
+          <SectionHeading
+            eyebrow="ABOUT SICEN"
+            title="匠心制造，值得信赖"
+            desc="思晨五金制品有限公司是一家专注于五金制品研发、制造与销售的企业，产品涵盖精密冲压件、精密机加工零件、紧固件、钣金件等，广泛应用于家电、汽车、电子与机械装备等行业。"
+          />
+          <!-- 演示：下面的段落文字直接在页面文件里修改 -->
+          <p data-reveal>
+            公司坚持“品质为先、客户至上”的经营理念，建立了覆盖来料检验、过程控制与出货检验的
+            全流程质量管理体系，确保从图纸到交付的每一个环节都稳定可控。
+          </p>
+          <p data-reveal>
+            无论是标准件询价还是定制化开发，我们都以专业与耐心回应每一次需求。
+          </p>
+          <div class="hero__actions" data-reveal style="margin-top: 36px">
+            <a class="btn btn--ghost" href="/about">更多关于我们 →</a>
+          </div>
+        </div>
+        <!-- 公司概貌轮播图：替换 public/images/company/slider-1 ~ slider-4.png 即可（左上角方块数=序号） -->
+        <div class="split__media">
+          <Carousel slides={overviewSlides} aspect="4 / 3" />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======== 核心业务 ======== -->
+  <section class="section section--alt">
+    <div class="container">
+      <SectionHeading
+        eyebrow="OUR BUSINESS"
+        title="核心业务"
+        desc="从标准件到精密定制件，思晨为客户提供一站式的五金制品解决方案。产品图已预留同名占位，真实图片同名覆盖即可。"
+        align="center"
+      />
+      <div class="card-grid" style="margin-top: 56px">
+        {
+          businesses.map((item) => (
+            <ProductCard title={item.title} desc={item.desc} tag={item.tag} src={item.src} />
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- ======== 数据统计 ======== -->
+  <section class="section section--tight">
+    <div class="container">
+      <div class="stat-grid" data-reveal>
+        {
+          stats.map((item) => (
+            <div class="stat">
+              <div class="stat__num">
+                {item.num}
+                <span>{item.suffix}</span>
+              </div>
+              <div class="stat__label">{item.label}</div>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- ======== 制造实力（全宽横幅） ======== -->
+  <section class="media-band">
+    <PlaceholderImage src="/images/equipment/workshop-1.png" label="制造实力" fill />
+    <div class="media-band__overlay" aria-hidden="true"></div>
+    <div class="container">
+      <div class="media-band__content">
+        <p class="eyebrow" data-reveal>MANUFACTURING EXCELLENCE</p>
+        <h2 class="h-section" data-reveal style="margin-top: 18px">
+          从图纸到交付<br />全流程品质管控
+        </h2>
+        <p class="lead" data-reveal>
+          冲压、机加、表面处理全工序自主可控，配合完善的检测体系，
+          确保每一件产品都符合客户要求。
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======== 品牌视频 ======== -->
+  <section class="section">
+    <div class="container">
+      <SectionHeading
+        eyebrow="BRAND VIDEO"
+        title="走进思晨"
+        desc="一段视频，了解我们的工厂、工艺与团队。（占位，上线后替换为真实视频）"
+        align="center"
+      />
+      <div style="margin-top: 48px">
+        <!-- 视频就绪后：加 src，例如 <VideoPlaceholder src="/videos/brand.mp4" poster="/images/poster.jpg" /> -->
+        <VideoPlaceholder />
+      </div>
+    </div>
+  </section>
+
+  <!-- ======== 新闻动态 ======== -->
+  <section class="section section--alt section--line">
+    <div class="container">
+      <div style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 24px">
+        <SectionHeading eyebrow="NEWS & INSIGHTS" title="新闻动态" />
+        <a class="btn btn--ghost btn--sm" href="/news" data-reveal>查看全部 →</a>
+      </div>
+      <div class="news-grid" style="margin-top: 44px">
+        {
+          news.map((item) => (
+            <NewsCard
+              title={item.title}
+              date={item.date}
+              category={item.category}
+              excerpt={item.excerpt}
+              src={item.src}
+            />
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- ======== CTA ======== -->
+  <section class="cta-band section section--tight">
+    <div class="container cta-band__inner">
+      <h2 class="cta-band__title" data-reveal>期待与您携手，共铸精品</h2>
+      <p class="muted" data-reveal>无论是标准产品询价，还是定制化开发需求，欢迎随时联系我们。</p>
+      <a class="btn btn--solid" href="/contact" data-reveal>联系我们</a>
+    </div>
+  </section>
+
+</Layout>

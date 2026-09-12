@@ -1,0 +1,32 @@
+---
+import PlaceholderImage from './PlaceholderImage.astro';
+
+interface Props {
+  title: string;
+  date: string;
+  category: string;
+  excerpt: string;
+  href?: string;
+  /** 配图（可选）：不传则显示占位图 */
+  src?: string;
+}
+
+const { title, date, category, excerpt, href = '/news', src } = Astro.props;
+---
+
+<article class="news-card" data-reveal>
+  <a class="news-card__link" href={href}>
+    <div class="news-card__media">
+      <PlaceholderImage src={src} label={title} aspect="16/9" />
+    </div>
+    <div class="news-card__body">
+      <div class="news-card__meta">
+        <span class="tag">{category}</span>
+        <time class="news-card__date">{date}</time>
+      </div>
+      <h3 class="news-card__title">{title}</h3>
+      <p class="news-card__excerpt">{excerpt}</p>
+      <span class="card__link">阅读全文 <span aria-hidden="true">→</span></span>
+    </div>
+  </a>
+</article>

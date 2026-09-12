@@ -1,0 +1,125 @@
+---
+/**
+ * 轮播图组件（无第三方依赖，纯 CSS + 原生 JS）
+ *
+ * 用法：
+ *   <Carousel slides={[{ src: '/images/company/slider-1.png', alt: '厂区外景' }, ...]} />
+ * 特性：自动播放（默认 5 秒）、左右箭头、底部圆点、鼠标悬停暂停、
+ *      支持 prefers-reduced-motion（用户系统设置"减少动态效果"时停止自动播放）。
+ */
+interface Slide {
+  src: string;
+  alt: string;
+  caption?: string;
+}
+
+interface Props {
+  slides: Slide[];
+  /** 宽高比，如 '4 / 3'、'16 / 9' */
+  aspect?: string;
+  /** 自动播放间隔（毫秒），0 表示不自动播放 */
+  interval?: number;
+}
+
+const { slides, aspect = '4 / 3', interval = 5000 } = Astro.props;
+---
+
+<div class="carousel" data-interval={interval} style={{ aspectRatio: aspect }}>
+  <div class="carousel__track">
+    {
+      slides.map((slide, i) => (
+        <figure class:list={['carousel__slide', { 'is-active': i === 0 }]}>
+          <img src={slide.src} alt={slide.alt} loading={i === 0 ? 'eager' : 'lazy'} />
+          {slide.caption && <figcaption class="carousel__caption">{slide.caption}</figcaption>}
+        </figure>
+      ))
+    }
+  </div>
+
+  <button class="carousel__nav carousel__nav--prev" type="button" aria-label="上一张">
+    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6">
+      <path d="M15 5l-7 7 7 7" />
+    </svg>
+  </button>
+  <button class="carousel__nav carousel__nav--next" type="button" aria-label="下一张">
+    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6">
+      <path d="M9 5l7 7-7 7" />
+    </svg>
+  </button>
+
+  <div class="carousel__dots">
+    {
+      slides.map((slide, i) => (
+        <button
+          class:list={['carousel__dot', { 'is-active': i === 0 }]}
+          type="button"
+          aria-label={`查看第 ${i + 1} 张：${slide.alt}`}
+        />
+      ))
+    }
+  </div>
+
+  <span class="carousel__counter">
+    <span data-current>1</span>&nbsp;/&nbsp;{slides.length}
+  </span>
+</div>
+
+<script>
+  const roots = document.querySelectorAll<HTMLElement>('.carousel');
+
+  roots.forEach((root) => {
+    const slides = Array.from(root.querySelectorAll<HTMLElement>('.carousel__slide'));
+    const dots = Array.from(root.querySelectorAll<HTMLElement>('.carousel__dot'));
+    const counter = root.querySelector<HTMLElement>('[data-current]');
+    const interval = Number(root.dataset.interval ?? 5000);
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (slides.length <= 1) return;
+
+    let index = 0;
+    let timer: number | null = null;
+
+    const show = (next: number) => {
+      index = (next + slides.length) % slides.length;
+      slides.forEach((slide, i) => slide.classList.toggle('is-active', i === index));
+      dots.forEach((dot, i) => dot.classList.toggle('is-active', i === index));
+      if (counter) counter.textContent = String(index + 1);
+    };
+
+    const stop = () => {
+      if (timer !== null) {
+        window.clearInterval(timer);
+        timer = null;
+      }
+    };
+
+    const start = () => {
+      if (reduceMotion || interval <= 0) return;
+      stop();
+      timer = window.setInterval(() => show(index + 1), interval);
+    };
+
+    root.querySelector('.carousel__nav--prev')?.addEventListener('click', () => {
+      show(index - 1);
+      start();
+    });
+    root.querySelector('.carousel__nav--next')?.addEventListener('click', () => {
+      show(index + 1);
+      start();
+    });
+    dots.forEach((dot, i) =>
+      dot.addEventListener('click', () => {
+        show(i);
+        start();
+      })
+    );
+
+    root.addEventListener('mouseenter', stop);
+    root.addEventListener('mouseleave', start);
+    root.addEventListener('focusin', stop);
+    root.addEventListener('focusout', start);
+
+    show(0);
+    start();
+  });
+</script>

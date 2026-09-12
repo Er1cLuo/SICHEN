@@ -1,0 +1,96 @@
+---
+// 页脚：联系方式、地址等均为占位内容，上线前请替换为真实信息。
+const navLinks = [
+  { href: '/', label: '首页' },
+  { href: '/about', label: '关于我们' },
+  { href: '/products', label: '产品中心' },
+  { href: '/news', label: '新闻资讯' },
+  { href: '/contact', label: '联系我们' },
+];
+
+const productLinks = [
+  { href: '/products', label: '精密冲压件' },
+  { href: '/products', label: '精密机加工件' },
+  { href: '/products', label: '紧固件与连接件' },
+  { href: '/products', label: '钣金与表面处理' },
+];
+---
+
+<footer class="footer">
+  <div class="container">
+    <div class="footer__grid">
+      <div class="footer__about">
+        <a class="brand" href="/" aria-label="思晨五金制品有限公司 首页">
+          <span class="brand__mark" aria-hidden="true">
+            <svg viewBox="0 0 32 32" fill="none">
+              <path d="M16 3 28 10.5v11L16 29 4 21.5v-11z" stroke="#f4f4f0" stroke-width="1.3" />
+              <circle cx="16" cy="16" r="4.6" stroke="#f4f4f0" stroke-width="1.3" />
+            </svg>
+          </span>
+          <span class="brand__text">
+            <span class="brand__name">思晨五金</span>
+            <span class="brand__sub">SICEN HARDWARE</span>
+          </span>
+        </a>
+        <p>
+          思晨五金制品有限公司专注于精密五金制品的研发、制造与交付，
+          以严谨的工艺与稳定的品质，为全球工业客户提供可靠的解决方案。
+          <span style="color: var(--text-faint)">（简介占位，请替换）</span>
+        </p>
+      </div>
+
+      <div class="footer__col">
+        <h4 class="footer__title">快速导航</h4>
+        <ul class="footer__links">
+          {
+            navLinks.map((item) => (
+              <li>
+                <a href={item.href}>{item.label}</a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+
+      <div class="footer__col">
+        <h4 class="footer__title">产品分类</h4>
+        <ul class="footer__links">
+          {
+            productLinks.map((item) => (
+              <li>
+                <a href={item.href}>{item.label}</a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+
+      <div class="footer__col">
+        <h4 class="footer__title">联系方式</h4>
+        <ul class="footer__contact">
+          <li>
+            <span>地址</span>
+            <span>广东省 XXXXX 工业园区 XX 号（占位）</span>
+          </li>
+          <li>
+            <span>电话</span>
+            <span>+86 0757-XXXX-XXXX（占位）</span>
+          </li>
+          <li>
+            <span>邮箱</span>
+            <span>info@sicen-hardware.com（占位）</span>
+          </li>
+          <li>
+            <span>时间</span>
+            <span>周一至周六 8:30 – 18:00</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer__bottom">
+      <span>© 2025 思晨五金制品有限公司 · SICEN HARDWARE PRODUCTS CO., LTD.</span>
+      <span>预留备案号位 · 本站内容为演示占位</span>
+    </div>
+  </div>
+</footer>
