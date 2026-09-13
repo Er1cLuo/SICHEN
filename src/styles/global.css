@@ -1297,6 +1297,15 @@ select {
   line-height: 1.9;
 }
 
+.footer__contact a {
+  color: var(--text-muted);
+  transition: color var(--dur) var(--ease);
+}
+
+.footer__contact a:hover {
+  color: var(--text);
+}
+
 .footer__contact li + li {
   margin-top: 12px;
 }

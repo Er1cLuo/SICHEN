@@ -216,24 +216,16 @@ const THEME = {
 
 /* ---------------- 生成清单：[路径, 宽, 高, 分类, 编号] ---------------- */
 const files = [
-  // 公司（轮播图 4 张 + 其他 3 张）
-  ['company/slider-1.png', 1600, 900, 'company', 1],
-  ['company/slider-2.png', 1600, 900, 'company', 2],
+  // 公司（slider-1/slider-2/facade 已是真实照片 .jpg，不再生成占位）
   ['company/slider-3.png', 1600, 900, 'company', 3],
   ['company/slider-4.png', 1600, 900, 'company', 4],
-  ['company/facade.png', 1200, 900, 'company', 0],
   ['company/office-1.png', 1200, 900, 'company', 0],
   ['company/team-1.png', 1200, 900, 'company', 0],
   ['company/map-1.png', 1920, 800, 'map', 0],
-  // 器械设备
-  ['equipment/hero.png', 1920, 1080, 'equipment', 0],
+  // 器械设备（hero / lab-1 / machine-1 / machine-2 / qc-1 已是真实照片 .jpg）
   ['equipment/workshop-1.png', 1600, 900, 'equipment', 0],
   ['equipment/workshop-stamping.png', 1200, 900, 'equipment', 0],
   ['equipment/workshop-cnc.png', 1200, 900, 'equipment', 0],
-  ['equipment/lab-1.png', 1200, 900, 'equipment', 0],
-  ['equipment/machine-1.png', 1200, 900, 'equipment', 1],
-  ['equipment/machine-2.png', 1200, 900, 'equipment', 2],
-  ['equipment/qc-1.png', 1200, 900, 'equipment', 3],
   ['equipment/warehouse-1.png', 1200, 900, 'equipment', 4],
   // 产品 8 类
   ['products/stamping-1.png', 1200, 900, 'products', 1],
@@ -260,26 +252,38 @@ const files = [
   ['certificates/cert-4.png', 1200, 900, 'certificates', 4],
   ['certificates/cert-5.png', 1200, 900, 'certificates', 5],
   ['certificates/cert-6.png', 1200, 900, 'certificates', 6],
-  // 车间概貌：4 个车间 × 3 张（1 张大图 1600×900 + 2 张细节图 1200×900）
-  ['workshops/cold-heading-1.png', 1600, 900, 'workshops', 1],
+  // 车间概貌（cnc-1/2/3、cold-heading-1、optical-sorting-1 已是真实照片 .jpg）
   ['workshops/cold-heading-2.png', 1200, 900, 'workshops', 2],
   ['workshops/cold-heading-3.png', 1200, 900, 'workshops', 3],
-  ['workshops/cnc-1.png', 1600, 900, 'workshops', 1],
-  ['workshops/cnc-2.png', 1200, 900, 'workshops', 2],
-  ['workshops/cnc-3.png', 1200, 900, 'workshops', 3],
   ['workshops/thread-rolling-1.png', 1600, 900, 'workshops', 1],
   ['workshops/thread-rolling-2.png', 1200, 900, 'workshops', 2],
   ['workshops/thread-rolling-3.png', 1200, 900, 'workshops', 3],
-  ['workshops/optical-sorting-1.png', 1600, 900, 'workshops', 1],
   ['workshops/optical-sorting-2.png', 1200, 900, 'workshops', 2],
   ['workshops/optical-sorting-3.png', 1200, 900, 'workshops', 3],
 ];
 
+/**
+ * 安全保护：默认【不覆盖已存在的图片】。
+ * 因为 public/images 下的同名文件可能已被替换为真实照片，误运行本脚本会覆盖它们。
+ * 如确实需要重新生成占位图，请显式加 --force（会覆盖，谨慎使用）：
+ *     node scripts/make-placeholder-pngs.mjs --force
+ */
+const FORCE = process.argv.includes('--force');
+
 let total = 0;
+let skipped = 0;
 for (const [rel, w, h, cat, badge] of files) {
   const { bg, accent } = THEME[cat];
   const filePath = path.join(BASE, rel);
   fs.mkdirSync(path.dirname(filePath), { recursive: true });
+
+  if (!FORCE && fs.existsSync(filePath)) {
+    const sizeKb = fs.statSync(filePath).size / 1024;
+    skipped++;
+    console.log(`↷ 跳过（已存在，未覆盖）${rel.padEnd(34)} 现有 ${sizeKb.toFixed(1)} KB`);
+    continue;
+  }
+
   const buf = encodePng(
     w,
     h,
@@ -291,4 +295,9 @@ for (const [rel, w, h, cat, badge] of files) {
     `✓ ${rel.padEnd(34)} ${w}x${h}  ${(buf.length / 1024).toFixed(1)} KB${badge ? `  [编号 ${badge}]` : ''}`
   );
 }
-console.log(`\n共 ${files.length} 张，合计 ${(total / 1024 / 1024).toFixed(2)} MB`);
+console.log(
+  `\n共 ${files.length} 张：新生成 ${files.length - skipped} 张，跳过（已存在）${skipped} 张，合计写入 ${(total / 1024 / 1024).toFixed(2)} MB`
+);
+if (skipped > 0 && !FORCE) {
+  console.log('提示：跳过的文件被视为"已有真实图片"。如确需覆盖，请加 --force 参数运行。');
+}

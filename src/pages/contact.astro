@@ -25,10 +25,10 @@ const mapLinks = {
   baidu: `https://map.baidu.com/search/${encodeURIComponent(address)}`,
 };
 
-// 提示：电话与邮箱仍为占位，请替换为真实信息（中山区号为 0760）
+// 联系方式（电话为真实号码，可点击拨打；邮箱仍为占位）
 const contactItems = [
   { label: '公司地址', value: address },
-  { label: '联系电话', value: '+86 0760-XXXX-XXXX（占位）' },
+  { label: '联系电话', value: '139 2818 0479', href: 'tel:+8613928180479' },
   { label: '电子邮箱', value: 'info@sicen-hardware.com（占位）' },
   { label: '工作时间', value: '周一至周六 8:30 – 18:00' },
 ];
@@ -56,7 +56,9 @@ const contactItems = [
               contactItems.map((item) => (
                 <li class="info-item" data-reveal>
                   <span class="info-item__label">{item.label}</span>
-                  <span class="info-item__value">{item.value}</span>
+                  <span class="info-item__value">
+                    {item.href ? <a href={item.href}>{item.value}</a> : item.value}
+                  </span>
                 </li>
               ))
             }
