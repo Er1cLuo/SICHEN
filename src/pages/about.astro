@@ -20,40 +20,19 @@ const values = [
 ];
 
 const timeline = [
-  { year: '2008', title: '公司创立', desc: '思晨五金成立，专注五金冲压与机加业务，服务本地制造企业。（占位）' },
-  { year: '2012', title: '产能升级', desc: '引进精密冲压与 CNC 加工设备，产能与精度显著提升。（占位）' },
-  { year: '2016', title: '体系认证', desc: '通过 ISO9001 质量管理体系认证，建立标准化品质管控流程。（占位）' },
-  { year: '2019', title: '走向海外', desc: '产品开始出口海外市场，服务客户覆盖多个国家与地区。（占位）' },
-  { year: '2022', title: '自动化改造', desc: '推进产线自动化与数字化改造，实现更高效、更稳定的交付。（占位）' },
-  { year: '2025', title: '持续精进', desc: '持续加大研发投入，向更精密、更智能的制造方向迈进。（占位）' },
+  { year: '2008', title: '公司创立', desc: '思晨五金成立，专注五金冲压与机加业务，服务本地制造企业。' },
+  { year: '2012', title: '产能升级', desc: '引进精密冲压与 CNC 加工设备，产能与精度显著提升。' },
+  { year: '2016', title: '体系认证', desc: '通过 ISO9001 质量管理体系认证，建立标准化品质管控流程。' },
+  { year: '2019', title: '走向海外', desc: '产品开始出口海外市场，服务客户覆盖多个国家与地区。' },
+  { year: '2022', title: '自动化改造', desc: '推进产线自动化与数字化改造，实现更高效、更稳定的交付。' },
+  { year: '2025', title: '持续精进', desc: '持续加大研发投入，向更精密、更智能的制造方向迈进。' },
 ];
 
-const certificates = [
-  { name: 'ISO9001', sub: '质量管理体系' },
-  { name: 'ISO14001', sub: '环境管理体系' },
-  { name: '高新技术企业', sub: '研发创新能力' },
-  { name: '优质供应商', sub: '客户长期认可' },
-];
-
-// 工厂与设备（7 张）
-const facility = [
-  { src: '/images/equipment/workshop-stamping.png', alt: '冲压车间' },
-  { src: '/images/equipment/workshop-cnc.png', alt: 'CNC 加工车间' },
-  { src: '/images/equipment/lab-1.jpg', alt: '品质检测中心' },
-  { src: '/images/equipment/machine-1.jpg', alt: '生产设备 1' },
-  { src: '/images/equipment/machine-2.jpg', alt: '生产设备 2' },
-  { src: '/images/equipment/qc-1.jpg', alt: '品质管控' },
-  { src: '/images/equipment/warehouse-1.png', alt: '仓储物流' },
-];
-
-// 证书展示（6 张）：替换 public/images/certificates/cert-1 ~ cert-6.png
+// 资质与荣誉：2 张证书图（图注写在图片下方）
+// 换图：同名覆盖 public/images/certificates/cert-1.png、cert-2.png
 const certGallery = [
-  { src: '/images/certificates/cert-1.png', alt: '证书 1（占位图 1 个方块）' },
-  { src: '/images/certificates/cert-2.png', alt: '证书 2（占位图 2 个方块）' },
-  { src: '/images/certificates/cert-3.png', alt: '证书 3（占位图 3 个方块）' },
-  { src: '/images/certificates/cert-4.png', alt: '证书 4（占位图 4 个方块）' },
-  { src: '/images/certificates/cert-5.png', alt: '证书 5（占位图 5 个方块）' },
-  { src: '/images/certificates/cert-6.png', alt: '证书 6（占位图 6 个方块）' },
+  { src: '/images/certificates/cert-1.png', caption: 'ISO9001 质量管理体系' },
+  { src: '/images/certificates/cert-2.png', caption: '高新技术企业证书' },
 ];
 
 // 公司风采（2 张）
@@ -65,7 +44,12 @@ const lifeGallery = [
 
 <Layout title="关于我们" description="了解思晨五金制品有限公司——公司简介、发展历程、企业文化与资质荣誉。">
 
-  <section class="page-hero">
+  <section class="page-hero page-hero--media">
+    <!-- 页头背景大图：换图只需改下面这一行，或把同名文件放进 public/images/company/ 覆盖 -->
+    <div class="page-hero__bg" aria-hidden="true">
+      <img src="/images/company/aboutus.jpg" alt="" />
+    </div>
+    <div class="page-hero__scrim" aria-hidden="true"></div>
     <div class="container">
       <p class="eyebrow" data-reveal>ABOUT SICEN</p>
       <h1 class="page-hero__title" data-reveal>关于我们</h1>
@@ -90,9 +74,6 @@ const lifeGallery = [
             公司拥有从模具开发、冲压/机加成型到表面处理的一站式制造能力，
             建立了覆盖来料、过程与出货的全流程质量管理体系，
             以稳定的品质、合理的价格与快速的响应服务国内外客户。
-          </p>
-          <p data-reveal>
-            <span class="muted">（本段为企业简介占位文案，请替换为贵司真实介绍）</span>
           </p>
         </div>
         <div class="split__media">
@@ -138,65 +119,17 @@ const lifeGallery = [
     </div>
   </section>
 
-  <!-- 资质荣誉 -->
+  <!-- 资质与荣誉（2 张证书，图注在图片下方） -->
   <section class="section section--alt">
     <div class="container">
       <SectionHeading eyebrow="CERTIFICATES" title="资质与荣誉" align="center" />
-      <div class="badge-grid" style="margin-top: 52px">
-        {
-          certificates.map((item) => (
-            <div class="badge" data-reveal>
-              <span class="badge__mark" aria-hidden="true">
-                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#d6d6d0" stroke-width="1.2">
-                  <circle cx="12" cy="12" r="9" />
-                  <path d="M8.5 12.2l2.4 2.4 4.6-5" />
-                </svg>
-              </span>
-              <div class="badge__name">{item.name}</div>
-              <div class="badge__sub">{item.sub}</div>
-            </div>
-          ))
-        }
-      </div>
-    </div>
-  </section>
-
-  <!-- 证书展示（6 张） -->
-  <section class="section">
-    <div class="container">
-      <SectionHeading
-        eyebrow="CERTIFICATES"
-        title="证书展示"
-        desc="体系认证与荣誉证书扫描件（占位图左上角方块数即序号）。"
-        align="center"
-      />
-      <div class="gallery-grid gallery-grid--3" style="margin-top: 52px">
+      <div class="gallery-grid gallery-grid--2 gallery-grid--cert" style="margin-top: 52px">
         {
           certGallery.map((item) => (
-            <div class="gallery-item" data-reveal>
-              <PlaceholderImage src={item.src} label={item.alt} aspect="4/3" />
-            </div>
-          ))
-        }
-      </div>
-    </div>
-  </section>
-
-  <!-- 工厂与设备（7 张） -->
-  <section class="section section--alt">
-    <div class="container">
-      <SectionHeading
-        eyebrow="OUR FACILITY"
-        title="工厂与设备"
-        desc="车间、设备、检测与仓储环境（占位图左上角方块数即序号）。"
-        align="center"
-      />
-      <div class="gallery-grid" style="margin-top: 52px">
-        {
-          facility.map((item) => (
-            <div class="gallery-item" data-reveal>
-              <PlaceholderImage src={item.src} label={item.alt} aspect="4/3" />
-            </div>
+            <figure class="gallery-item" data-reveal>
+              <PlaceholderImage src={item.src} label={item.caption} aspect="4/3" />
+              <figcaption class="cert-caption">{item.caption}</figcaption>
+            </figure>
           ))
         }
       </div>

@@ -1,21 +1,29 @@
 ---
-// 页脚：联系方式、地址等均为占位内容，上线前请替换为真实信息。
+// 页脚
 const navLinks = [
   { href: '/', label: '首页' },
   { href: '/about', label: '关于我们' },
   { href: '/products', label: '产品中心' },
-  { href: '/workshops', label: '车间概貌' },
+  { href: '/workshops', label: '厂区展示' },
   { href: '/contact', label: '联系我们' },
 ];
 
 const productLinks = [
-  { href: '/products', label: '精密冲压件' },
-  { href: '/products', label: '精密机加工件' },
-  { href: '/products', label: '紧固件与连接件' },
-  { href: '/workshops', label: '冷镦车间' },
-  { href: '/workshops#cnc', label: 'CNC 车间' },
-  { href: '/workshops#thread-rolling', label: '搓牙车间' },
-  { href: '/workshops#optical-sorting', label: '光学筛选车间' },
+  { href: '/products#nut', label: '螺母类' },
+  { href: '/products#screw', label: '一般冷镦螺丝件' },
+  { href: '/products#special', label: '多工位冷镦异形件' },
+  { href: '/products#washer', label: '冲压垫片' },
+  { href: '/products#turning', label: '车床件' },
+  { href: '/products#other', label: '其他异形类' },
+];
+
+const workshopLinks = [
+  { href: '/workshops#part-1', label: '冷镦成型' },
+  { href: '/workshops#part-2', label: '搓牙' },
+  { href: '/workshops#part-3', label: '数控加工' },
+  { href: '/workshops#part-4', label: '光学筛选' },
+  { href: '/workshops#part-5', label: '仓储' },
+  { href: '/workshops#part-6', label: '包装' },
 ];
 ---
 
@@ -24,11 +32,8 @@ const productLinks = [
     <div class="footer__grid">
       <div class="footer__about">
         <a class="brand" href="/" aria-label="思晨五金制品有限公司 首页">
-          <span class="brand__mark" aria-hidden="true">
-            <svg viewBox="0 0 32 32" fill="none">
-              <path d="M16 3 28 10.5v11L16 29 4 21.5v-11z" stroke="#f4f4f0" stroke-width="1.3" />
-              <circle cx="16" cy="16" r="4.6" stroke="#f4f4f0" stroke-width="1.3" />
-            </svg>
+          <span class="brand__mark">
+            <img src="/logo.svg" alt="思晨五金 logo" width="40" height="40" />
           </span>
           <span class="brand__text">
             <span class="brand__name">思晨五金</span>
@@ -38,7 +43,6 @@ const productLinks = [
         <p>
           思晨五金制品有限公司专注于精密五金制品的研发、制造与交付，
           以严谨的工艺与稳定的品质，为全球工业客户提供可靠的解决方案。
-          <span style="color: var(--text-faint)">（简介占位，请替换）</span>
         </p>
       </div>
 
@@ -69,6 +73,19 @@ const productLinks = [
       </div>
 
       <div class="footer__col">
+        <h4 class="footer__title">厂区展示</h4>
+        <ul class="footer__links">
+          {
+            workshopLinks.map((item) => (
+              <li>
+                <a href={item.href}>{item.label}</a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+
+      <div class="footer__col footer__col--contact">
         <h4 class="footer__title">联系方式</h4>
         <ul class="footer__contact">
           <li>
@@ -81,7 +98,7 @@ const productLinks = [
           </li>
           <li>
             <span>邮箱</span>
-            <span>info@sicen-hardware.com（占位）</span>
+            <span>2724247155@qq.com</span>
           </li>
           <li>
             <span>时间</span>
@@ -93,7 +110,7 @@ const productLinks = [
 
     <div class="footer__bottom">
       <span>© 2025 思晨五金制品有限公司 · SICEN HARDWARE PRODUCTS CO., LTD.</span>
-      <span>预留备案号位 · 本站内容为演示占位</span>
+      <a href="https://beian.miit.gov.cn/" target="_blank" rel="noopener">粤ICP备2026136130号</a>
     </div>
   </div>
 </footer>

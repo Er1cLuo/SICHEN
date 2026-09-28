@@ -224,51 +224,94 @@ select {
 /* ==========================================================================
    页头
    ========================================================================== */
+/* 页头尺寸用变量统一控制。
+   注意：横向几何（导航字号 / 导航间距 / 按钮左右内边距）**不随滚动改变**，
+   否则滑动时选项和按钮会在 X 轴上左右乱晃。下滑只缩竖向尺寸。 */
 .site-header {
+  --header-h: 78px;
+  --nav-size: 14px;
+  --nav-gap: 38px;
+  --cta-pad-y: 11px;
+  --cta-pad-x: 24px;
   position: fixed;
   inset: 0 0 auto 0;
   z-index: 100;
-  height: 78px;
+  height: var(--header-h);
   transition: background var(--dur) var(--ease), border-color var(--dur) var(--ease),
     height var(--dur) var(--ease);
   border-bottom: 1px solid transparent;
 }
 
 .site-header.scrolled {
-  height: 66px;
+  --header-h: 56px;
+  --cta-pad-y: 7px; /* 只压高度，左右内边距保持 24px 不变 */
   background: rgba(10, 10, 11, 0.82);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
   border-bottom-color: var(--line);
 }
 
+/* 页头下滑时品牌一起缩小；变量建立在 .brand 上，页脚品牌不受影响 */
+.site-header.scrolled .brand {
+  --brand-mark: 29px;
+  --brand-name: 15px;
+  --brand-sub: 8px;
+  --brand-gap: 11px;
+}
+
+/* 三列网格：品牌 / 导航 / 按钮 各自独立定位，
+   品牌或按钮宽度变化都不会带动中间的导航左右移动 */
 .site-header__inner {
   height: 100%;
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
   align-items: center;
-  justify-content: space-between;
   gap: 24px;
 }
 
-/* 品牌 */
+/* 三列各就各位：品牌左、导航居中、按钮右；汉堡菜单占据按钮那一列 */
+.site-header__inner > .brand {
+  grid-column: 1;
+}
+
+.site-header__inner > .nav {
+  grid-column: 2;
+  justify-self: center;
+}
+
+.site-header__inner > .nav__cta,
+.site-header__inner > .hamburger {
+  grid-column: 3;
+  justify-self: end;
+}
+
+/* 品牌（页头与页脚共用）：默认尺寸写在这里，页头下滑时由 .site-header.scrolled .brand 覆盖 */
 .brand {
+  --brand-mark: 40px;
+  --brand-name: 17px;
+  --brand-sub: 9px;
+  --brand-gap: 14px;
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: var(--brand-gap);
+  transition: gap var(--dur) var(--ease);
 }
 
 .brand__mark {
-  width: 36px;
-  height: 36px;
-  display: grid;
-  place-items: center;
-  border: 1px solid var(--line-strong);
-  border-radius: 50%;
+  width: var(--brand-mark);
+  height: var(--brand-mark);
+  flex-shrink: 0;
+  display: block;
+  border-radius: 25%;
+  overflow: hidden;
+  transition: width var(--dur) var(--ease), height var(--dur) var(--ease);
 }
 
-.brand__mark svg {
-  width: 18px;
-  height: 18px;
+.brand__mark img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
 }
 
 .brand__text {
@@ -278,33 +321,36 @@ select {
 }
 
 .brand__name {
-  font-size: 17px;
+  font-size: var(--brand-name);
   font-weight: 600;
   letter-spacing: 0.2em;
+  transition: font-size var(--dur) var(--ease);
 }
 
 .brand__sub {
-  font-size: 9px;
+  font-size: var(--brand-sub);
   letter-spacing: 0.42em;
   text-transform: uppercase;
   color: var(--text-muted);
   margin-top: 2px;
+  transition: font-size var(--dur) var(--ease);
 }
 
 /* 导航 */
 .nav {
   display: flex;
   align-items: center;
-  gap: 38px;
+  gap: var(--nav-gap);
+  transition: gap var(--dur) var(--ease);
 }
 
 .nav__link {
   position: relative;
-  font-size: 14px;
+  font-size: var(--nav-size);
   letter-spacing: 0.08em;
   color: var(--text-muted);
   padding-block: 6px;
-  transition: color var(--dur) var(--ease);
+  transition: color var(--dur) var(--ease), font-size var(--dur) var(--ease);
 }
 
 .nav__link::after {
@@ -333,6 +379,7 @@ select {
 
 .nav__cta {
   margin-left: 6px;
+  padding: var(--cta-pad-y) var(--cta-pad-x);
 }
 
 /* 汉堡菜单 */
@@ -748,12 +795,16 @@ select {
 /* ==========================================================================
    全宽媒体横幅
    ========================================================================== */
+/* 内容宽横幅：不再通栏满屏，宽度与其它版块一致，高度按 21:9 自适应 */
 .media-band {
   position: relative;
-  min-height: clamp(360px, 62vh, 640px);
   display: flex;
   align-items: center;
   overflow: hidden;
+  width: 100%;
+  aspect-ratio: 21 / 9;
+  min-height: 320px;
+  border-radius: var(--radius);
 }
 
 .media-band .ph__tag,
@@ -772,6 +823,7 @@ select {
   position: relative;
   z-index: 2;
   max-width: 620px;
+  padding-inline: clamp(24px, 4vw, 56px);
 }
 
 .media-band__content .lead {
@@ -860,7 +912,7 @@ select {
   color: var(--text-faint);
 }
 
-/* 真实视频模式：去掉网格水印，视频铺满 */
+/* 真实视频模式：去掉网格水印，视频铺满窗口 */
 .video-ph--live::before {
   display: none;
 }
@@ -870,8 +922,21 @@ select {
   inset: 0;
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
   background: #000;
+}
+
+/* 视频窗口宽度：内容的 3/4 居中（手机上占满，避免过小） */
+.video-frame {
+  width: 75%;
+  margin: 48px auto 0;
+  transition: width var(--dur) var(--ease);
+}
+
+@media (max-width: 900px) {
+  .video-frame {
+    width: 100%;
+  }
 }
 
 /* ==========================================================================
@@ -934,6 +999,52 @@ select {
   margin-top: 20px;
   max-width: 620px;
   color: var(--text-muted);
+}
+
+/* ---------- 页头带背景大图的变体（关于我们 / 产品中心 / 厂区展示 三页共用） ----------
+   结构：.page-hero--media > .page-hero__bg(img) + .page-hero__scrim(遮罩) + .container
+   想换图：改页面对应 <img src>；想调暗度：改下面 .page-hero__scrim 的渐变数值
+   高度 = 首页首屏（.hero 为 100svh）的一半，三页一致、不会太大（内容垂直居中） */
+.page-hero--media {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 50vh; /* 老浏览器回退 */
+  min-height: 50svh;
+  padding-block: clamp(104px, 12vh, 150px) clamp(44px, 6vh, 80px);
+}
+
+.page-hero--media .page-hero__bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.page-hero--media .page-hero__bg img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+/* 深色渐变遮罩：左侧最暗（压住文字），右侧稍亮（露出画面） */
+.page-hero--media .page-hero__scrim {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background:
+    linear-gradient(
+      90deg,
+      rgba(10, 10, 11, 0.95) 0%,
+      rgba(10, 10, 11, 0.82) 42%,
+      rgba(10, 10, 11, 0.42) 100%
+    ),
+    linear-gradient(180deg, rgba(10, 10, 11, 0.55) 0%, rgba(10, 10, 11, 0) 45%);
+}
+
+.page-hero--media .container {
+  position: relative;
+  z-index: 2;
 }
 
 /* ==========================================================================
@@ -1031,47 +1142,6 @@ select {
   color: var(--text-muted);
 }
 
-.badge-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 1px;
-  background: var(--line);
-  border: 1px solid var(--line);
-}
-
-.badge {
-  background: var(--bg);
-  padding: 34px 26px;
-  text-align: center;
-  transition: background var(--dur) var(--ease);
-}
-
-.badge:hover {
-  background: var(--bg-card);
-}
-
-.badge__mark {
-  width: 44px;
-  height: 44px;
-  margin-inline: auto;
-  display: grid;
-  place-items: center;
-  border: 1px solid var(--line-strong);
-  border-radius: 50%;
-}
-
-.badge__name {
-  margin-top: 18px;
-  font-size: 14px;
-  letter-spacing: 0.1em;
-}
-
-.badge__sub {
-  margin-top: 8px;
-  font-size: 11px;
-  letter-spacing: 0.14em;
-  color: var(--text-faint);
-}
 
 /* ==========================================================================
    产品页：定制流程步骤
@@ -1253,13 +1323,19 @@ select {
 
 .footer__grid {
   display: grid;
-  grid-template-columns: 1.6fr 1fr 1fr 1.2fr;
-  gap: 44px;
+  /* 品牌 / 快速导航 / 产品分类 / 厂区展示 / 联系方式
+     五列宽度收敛到接近等比，避免联系方式列独占近一半宽度造成右侧大片留白 */
+  grid-template-columns: 1.45fr 0.85fr 1fr 1fr 1.95fr;
+  gap: 32px;
   padding-bottom: 56px;
 }
 
-.footer__about p {
-  margin-top: 18px;
+/* 长地址允许换行，标签列不再挤压正文 */
+.footer__col--contact .footer__contact li {
+  align-items: flex-start;
+}
+
+.footer__about p {  margin-top: 18px;
   font-size: 13.5px;
   line-height: 2;
   color: var(--text-muted);
@@ -1310,11 +1386,23 @@ select {
   margin-top: 12px;
 }
 
-.footer__contact span {
+/* 仅限制"标签"列宽（如"地址""电话"），内容列自适应剩余宽度 */
+.footer__contact li > span:first-child {
   color: var(--text-faint);
-  width: 3.6em;
+  width: 3.2em;
   flex-shrink: 0;
   letter-spacing: 0.1em;
+}
+
+.footer__contact li > span:last-child,
+.footer__contact li > a {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+/* 联系方式列：长文本优雅换行，不被标签挤压 */
+.footer__col--contact .footer__contact li {
+  gap: 10px;
 }
 
 .footer__bottom {
@@ -1328,6 +1416,15 @@ select {
   font-size: 12px;
   letter-spacing: 0.08em;
   color: var(--text-faint);
+}
+
+.footer__bottom a {
+  color: var(--text-faint);
+  transition: color var(--dur) var(--ease);
+}
+
+.footer__bottom a:hover {
+  color: var(--text);
 }
 
 /* ==========================================================================
@@ -1452,21 +1549,6 @@ select {
   object-fit: cover;
 }
 
-.carousel__caption {
-  position: absolute;
-  left: 20px;
-  bottom: 18px;
-  font-size: 11px;
-  letter-spacing: 0.26em;
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.88);
-  background: rgba(10, 10, 11, 0.45);
-  border: 1px solid rgba(255, 255, 255, 0.16);
-  padding: 6px 12px;
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
-}
-
 .carousel__nav {
   position: absolute;
   top: 50%;
@@ -1546,6 +1628,30 @@ select {
   grid-template-columns: repeat(3, 1fr);
 }
 
+/* 三列网格只占页面一半宽度并居中（产品图展示用，缩小单图尺寸） */
+.gallery-grid--half {
+  width: 50%;
+  margin-inline: auto;
+}
+
+/* 证书展示（2 张）：居中并收到约 7 成宽，扫描件看得清又不至于过大 */
+.gallery-grid--cert {
+  width: 72%;
+  margin-inline: auto;
+}
+
+@media (max-width: 1080px) {
+  .gallery-grid--cert {
+    width: 100%;
+  }
+}
+
+@media (max-width: 1080px) {
+  .gallery-grid--half {
+    width: 100%;
+  }
+}
+
 .gallery-grid--2 {
   grid-template-columns: repeat(2, 1fr);
 }
@@ -1583,10 +1689,6 @@ select {
     width: 36px;
     height: 36px;
   }
-
-  .carousel__caption {
-    display: none;
-  }
 }
 
 /* ==========================================================================
@@ -1598,6 +1700,10 @@ select {
   gap: 1px;
   background: var(--line);
   border: 1px solid var(--line);
+}
+
+.shop-grid--3 {
+  grid-template-columns: repeat(3, 1fr);
 }
 
 .shop-card {
@@ -1780,6 +1886,506 @@ select {
 }
 
 /* ==========================================================================
+   联系页：直接联系入口（电话 / 邮件 / 微信）
+   ========================================================================== */
+.contact-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.contact-action {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 22px 24px;
+  border: 1px solid var(--line);
+  background: var(--bg-soft);
+  transition: all var(--dur) var(--ease);
+}
+
+a.contact-action:hover {
+  border-color: var(--line-strong);
+  background: var(--bg-card);
+  transform: translateY(-2px);
+}
+
+.contact-action__icon {
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--line-strong);
+  border-radius: 50%;
+  color: var(--silver);
+}
+
+.contact-action__body {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+  min-width: 0;
+}
+
+.contact-action__label {
+  font-size: 11px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+
+.contact-action__value {
+  font-size: 16px;
+  letter-spacing: 0.04em;
+  color: var(--text);
+  word-break: break-word;
+}
+
+.contact-action__arrow {
+  color: var(--silver);
+  font-size: 15px;
+  transition: transform var(--dur) var(--ease);
+}
+
+a.contact-action:hover .contact-action__arrow {
+  transform: translateX(5px);
+}
+
+.contact-action--qr {
+  align-items: center;
+}
+
+.contact-action__qr {
+  flex-shrink: 0;
+  width: 132px;
+  height: 132px;
+  border: 1px solid var(--line);
+  background: #101013;
+}
+
+@media (max-width: 600px) {
+  .contact-action {
+    flex-wrap: wrap;
+  }
+
+  .contact-action__qr {
+    width: 100%;
+    height: auto;
+    margin-top: 8px;
+  }
+}
+
+/* ==========================================================================
+   涉及领域
+   ========================================================================== */
+.industry-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  background: var(--line);
+  border: 1px solid var(--line);
+}
+
+.industry-item {
+  background: var(--bg);
+  transition: background var(--dur) var(--ease);
+}
+
+.industry-item:hover {
+  background: var(--bg-card);
+}
+
+.industry-item__body {
+  padding: 20px 22px 24px;
+  border-top: 1px solid var(--line);
+}
+
+.industry-item__en {
+  font-size: 10px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+
+.industry-item__title {
+  margin-top: 8px;
+  font-size: 17px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+}
+
+@media (max-width: 1080px) {
+  .industry-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .industry-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ==========================================================================
+   图集卡片（厂区展示）与产品分类标题
+   ========================================================================== */
+.gallery-item--card {
+  background: var(--bg);
+}
+
+/* 证书图注（图片下方） */
+.cert-caption {
+  padding: 16px 18px 18px;
+  border-top: 1px solid var(--line);
+  text-align: center;
+  font-size: 14px;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+}
+
+.gallery-item__body {
+  padding: 20px 22px 24px;
+  border-top: 1px solid var(--line);
+}
+
+.gallery-item__en {
+  font-size: 10px;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+
+.gallery-item__title {
+  margin-top: 10px;
+  font-size: 17px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+}
+
+.gallery-item__desc {
+  margin-top: 10px;
+  font-size: 13px;
+  line-height: 1.9;
+  color: var(--text-muted);
+}
+
+.cat-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.cat-count {
+  font-size: 12px;
+  letter-spacing: 0.24em;
+  color: var(--text-faint);
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  padding: 6px 16px;
+}
+
+/* 产品分类：左侧图片网格（半宽）+ 右侧介绍内容 */
+.cat-body {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(32px, 5vw, 64px);
+  align-items: start;
+  margin-top: 44px;
+}
+
+.cat-intro {
+  font-size: 15px;
+  line-height: 2;
+  color: var(--text-muted);
+}
+
+.cat-points {
+  margin-top: 26px;
+  border-top: 1px solid var(--line);
+}
+
+.cat-points li {
+  padding-block: 14px;
+  border-bottom: 1px solid var(--line);
+  font-size: 14px;
+  letter-spacing: 0.03em;
+  color: var(--text);
+}
+
+.cat-body__info .btn {
+  margin-top: 30px;
+}
+
+@media (max-width: 900px) {
+  .cat-body {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+}
+
+/* ==========================================================================
+   厂区展示：每个项目（1 大图 + 2 小图 + 右侧注释）
+   ========================================================================== */
+.shop-feature {
+  display: grid;
+  /* 图片区与文字区五五开 */
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  column-gap: clamp(16px, 1.6vw, 26px);
+  row-gap: 20px;
+  align-items: start;
+  margin-top: 40px;
+  padding-top: 40px;
+  border-top: 1px solid var(--line);
+}
+
+.shop-feature:first-of-type {
+  margin-top: 40px;
+  padding-top: 0;
+  border-top: 0;
+}
+
+/* 图片区：铺满左栏；大图与「两张小图合计」等宽，三张图内容宽度一致 */
+.shop-feature__media {
+  display: grid;
+  gap: 2px;
+  background: var(--line);
+  border: 1px solid var(--line);
+  width: 100%;
+}
+
+/* 大图铺满图片区 */
+.shop-feature__hero {
+  width: 100%;
+}
+
+.shop-feature__thumbs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2px;
+}
+
+/* 车间只有 1 ~ 2 张图时：等宽并排（自动按图片数量均分，不留空槽） */
+.shop-feature__row {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  gap: 2px;
+}
+
+/* 车间下的设备小分项 */
+.shop-feature__subs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.shop-feature__subs li {
+  font-size: 12.5px;
+  letter-spacing: 0.1em;
+  color: var(--silver);
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  padding: 6px 14px;
+}
+
+/* 注释区：独立信息块（浅底 + 左侧竖线），与图片区分界一眼可见 */
+.shop-feature__info {
+  display: flex;
+  flex-direction: column;
+  align-self: stretch;
+  padding: 18px 18px 20px;
+  border-left: 1px solid var(--line-strong);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0) 62%);
+}
+
+/* 序号 + 英文名同一行，作为信息块的抬头 */
+.shop-feature__head {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+}
+
+.shop-feature__head .eyebrow {
+  flex: 1 1 auto;
+  min-width: 0;
+  line-height: 1.7;
+}
+
+/* 序号自带短横线，此处不再重复 eyebrow 的引线 */
+.shop-feature__head .eyebrow::before {
+  display: none;
+}
+
+.shop-feature__index {
+  flex: none;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  color: var(--silver);
+}
+
+.shop-feature__index::after {
+  content: "";
+  display: inline-block;
+  width: 20px;
+  height: 1px;
+  margin-left: 11px;
+  vertical-align: middle;
+  background: var(--line-strong);
+}
+
+.shop-feature__title {
+  margin-top: 10px;
+  font-size: 23px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  line-height: 1.4;
+}
+
+.shop-feature__desc {
+  margin-top: 12px;
+  font-size: 14.5px;
+  line-height: 1.95;
+  color: var(--text-muted);
+}
+
+.shop-feature__note {
+  /* 参数栏沉到信息块底部，与图片区底边对齐（无富余高度时贴住正文） */
+  margin-top: auto;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+  font-size: 12.5px;
+  line-height: 1.9;
+  color: var(--text-faint);
+}
+
+@media (max-width: 900px) {
+  .shop-feature {
+    grid-template-columns: 1fr;
+    row-gap: 18px;
+    margin-top: 34px;
+    padding-top: 34px;
+  }
+
+  .shop-feature__info {
+    padding: 16px 0 0;
+    border-left: 0;
+    border-top: 1px solid var(--line);
+    background: none;
+  }
+
+  .shop-feature__note {
+    margin-top: 16px;
+  }
+}
+
+/* ==========================================================================
+   车间机器特性（写在每个车间信息块内的规格明细）
+   ========================================================================== */
+.shop-feature__specs {
+  margin-top: 14px;
+  border-top: 1px solid var(--line);
+}
+
+.shop-feature__specs > div {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  padding-block: 7px;
+  border-bottom: 1px solid var(--line);
+}
+
+.shop-feature__specs dt {
+  flex: none;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  color: var(--text-faint);
+}
+
+.shop-feature__specs dd {
+  font-size: 13px;
+  letter-spacing: 0.02em;
+  color: var(--silver);
+  text-align: right;
+}
+
+/* ==========================================================================
+   工艺特点（厂区展示内嵌的结构化内容）
+   ========================================================================== */
+.craft-block {
+  margin-top: 40px;
+  padding-top: 40px;
+  border-top: 1px solid var(--line);
+}
+
+.craft-block__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px 24px;
+  margin-bottom: 20px;
+}
+
+.craft-block__title {
+  font-size: 19px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+}
+
+.craft-block__hint {
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  color: var(--text-faint);
+}
+
+/* 搓牙工艺特点 */
+.craft-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1px;
+  background: var(--line);
+  border: 1px solid var(--line);
+}
+
+.craft-item {
+  padding: 24px 22px 26px;
+  background: var(--bg);
+}
+
+.craft-item__no {
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  color: var(--text-faint);
+}
+
+.craft-item__title {
+  margin-top: 12px;
+  font-size: 16px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+}
+
+.craft-item__desc {
+  margin-top: 10px;
+  font-size: 13px;
+  line-height: 1.95;
+  color: var(--text-muted);
+}
+
+.craft-limit {
+  margin-top: 16px;
+  font-size: 12.5px;
+  line-height: 1.9;
+  color: var(--text-faint);
+}
+
+/* ==========================================================================
    响应式
    ========================================================================== */
 @media (max-width: 1080px) {
@@ -1793,8 +2399,8 @@ select {
     grid-template-columns: repeat(2, 1fr);
   }
 
-  .badge-grid {
-    grid-template-columns: repeat(2, 1fr);
+  .craft-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .steps {
@@ -1833,8 +2439,17 @@ select {
   }
 
   .footer__grid {
-    grid-template-columns: 1fr 1fr;
-    gap: 36px;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 32px;
+  }
+
+  .footer__about {
+    grid-column: 1 / -1;
+  }
+
+  /* 窄屏时联系方式整行铺满，避免内容被挤成多行 */
+  .footer__col--contact {
+    grid-column: 1 / -1;
   }
 
   .contact-grid {
@@ -1851,8 +2466,13 @@ select {
   .card-grid--3,
   .news-grid,
   .steps,
-  .badge-grid {
+  .craft-grid {
     grid-template-columns: 1fr;
+  }
+
+  .craft-block {
+    margin-top: 34px;
+    padding-top: 34px;
   }
 
   .stat-grid {

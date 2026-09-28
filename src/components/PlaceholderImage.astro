@@ -51,7 +51,7 @@ const gridId = `${uid}-grid`;
           viewBox="0 0 800 450"
           preserveAspectRatio="xMidYMid slice"
           role="img"
-          aria-label={`${label}（占位图）`}
+          aria-label={label}
         >
           <defs>
             <radialGradient id={glowId} cx="28%" cy="18%" r="95%">
@@ -83,7 +83,6 @@ const gridId = `${uid}-grid`;
             font-family="'Helvetica Neue', Arial, sans-serif"
           >SC</text>
         </svg>
-        <span class="ph__tag">IMAGE PLACEHOLDER</span>
         <span class="ph__label">{label}</span>
         {sub && <span class="ph__sub">{sub}</span>}
       </>

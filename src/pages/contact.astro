@@ -29,7 +29,7 @@ const mapLinks = {
 const contactItems = [
   { label: '公司地址', value: address },
   { label: '联系电话', value: '139 2818 0479', href: 'tel:+8613928180479' },
-  { label: '电子邮箱', value: 'info@sicen-hardware.com（占位）' },
+  { label: '电子邮箱', value: '2724247155@qq.com' },
   { label: '工作时间', value: '周一至周六 8:30 – 18:00' },
 ];
 ---
@@ -66,38 +66,61 @@ const contactItems = [
         </div>
 
         <div>
-          <SectionHeading eyebrow="SEND MESSAGE" title="在线留言" />
-          <form class="form" id="contactForm" style="margin-top: 36px" data-reveal>
-            <div class="form__row">
-              <div class="field">
-                <label for="name">姓名 *</label>
-                <input id="name" name="name" type="text" placeholder="您的姓名" required />
-              </div>
-              <div class="field">
-                <label for="company">公司</label>
-                <input id="company" name="company" type="text" placeholder="公司名称" />
-              </div>
+          <SectionHeading eyebrow="GET IN TOUCH" title="直接联系我们" />
+          <div class="contact-actions" style="margin-top: 36px">
+            <a class="contact-action" href="tel:+8613928180479" data-reveal>
+              <span class="contact-action__icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.4">
+                  <path d="M6.5 3.5h3l1.5 4-2 1.5a12 12 0 0 0 6 6l1.5-2 4 1.5v3c0 .8-.7 1.5-1.5 1.5A16 16 0 0 1 5 5c0-.8.7-1.5 1.5-1.5z" />
+                </svg>
+              </span>
+              <span class="contact-action__body">
+                <span class="contact-action__label">拨打电话</span>
+                <span class="contact-action__value">139 2818 0479</span>
+              </span>
+              <span class="contact-action__arrow" aria-hidden="true">→</span>
+            </a>
+
+            <a class="contact-action" href="mailto:2724247155@qq.com" data-reveal>
+              <span class="contact-action__icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.4">
+                  <rect x="3" y="5" width="18" height="14" />
+                  <path d="M3 6.5l9 6 9-6" />
+                </svg>
+              </span>
+              <span class="contact-action__body">
+                <span class="contact-action__label">发送邮件</span>
+                <span class="contact-action__value">2724247155@qq.com</span>
+              </span>
+              <span class="contact-action__arrow" aria-hidden="true">→</span>
+            </a>
+
+            <div class="contact-action contact-action--qr" data-reveal>
+              <span class="contact-action__icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.4">
+                  <path d="M9 4C5.5 5.5 4 8.5 4 12c0 4.5 3.5 8 8 8 3.5 0 6.5-2.2 7.6-5.4M9 4c1.6-.6 3.5-.6 5 0" />
+                  <circle cx="9" cy="11" r="1" />
+                  <circle cx="15" cy="11" r="1" />
+                </svg>
+              </span>
+              <span class="contact-action__body">
+                <span class="contact-action__label">微信联系</span>
+                <span class="contact-action__value">扫描右侧二维码添加业务微信</span>
+              </span>
+              <img
+                class="contact-action__qr"
+                src="/images/company/wechat-qr.png"
+                alt="思晨五金业务微信二维码"
+                width="132"
+                height="132"
+                loading="lazy"
+              />
             </div>
-            <div class="form__row">
-              <div class="field">
-                <label for="phone">电话</label>
-                <input id="phone" name="phone" type="tel" placeholder="联系电话" />
-              </div>
-              <div class="field">
-                <label for="email">邮箱 *</label>
-                <input id="email" name="email" type="email" placeholder="电子邮箱" required />
-              </div>
-            </div>
-            <div class="field">
-              <label for="message">留言内容 *</label>
-              <textarea id="message" name="message" placeholder="请描述您的需求，例如产品、数量、材质要求……" required></textarea>
-            </div>
-            <button class="btn btn--solid" type="submit">发送留言</button>
-            <p class="form__note" style="margin-top: 14px">
-              （演示占位表单，尚未接入后端；上线后可对接邮件或表单服务）
-            </p>
-            <p class="form__success" id="formSuccess">✓ 留言已记录（占位）。上线后请接入真实后端或邮件通知。</p>
-          </form>
+          </div>
+
+          <p class="muted" style="margin-top: 20px; font-size: 13px" data-reveal>
+            工作时间：周一至周六 8:30 – 18:00；也可直接到厂洽谈（建议提前电话预约）。
+          </p>
         </div>
       </div>
 
@@ -131,7 +154,7 @@ const contactItems = [
             ) : (
               <PlaceholderImage
                 src="/images/company/map-1.png"
-                label="公司位置示意图（配置 PUBLIC_AMAP_KEY 后自动显示高德地图）"
+                label="公司位置"
                 aspect="21/9"
               />
             )
@@ -157,8 +180,7 @@ const contactItems = [
       </div>
 
       <p class="muted" style="margin-top: 20px; font-size: 13px" data-reveal>
-        地图由高德地图提供（坐标 {location}）。点击地图可跳转高德地图导航；如需替换为其他地图服务，
-        修改 <code>contact.astro</code> 顶部的 <code>mapImage</code> 生成逻辑即可。
+        点击地图可跳转高德地图导航，或使用上方按钮选择其他地图。
       </p>
     </div>
   </section>
@@ -180,15 +202,6 @@ const contactItems = [
       }, 2000);
     });
 
-    // 留言表单（演示：仅前端提示）
-    const form = document.getElementById('contactForm');
-    form?.addEventListener('submit', (event) => {
-      event.preventDefault();
-      const success = document.getElementById('formSuccess');
-      success?.classList.add('show');
-      form.reset();
-      setTimeout(() => success?.classList.remove('show'), 6000);
-    });
   </script>
 
 </Layout>

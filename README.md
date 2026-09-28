@@ -20,7 +20,7 @@ npm run preview  # 本地预览构建产物
 ## 目录结构
 
 ```
-├── public/                  # 静态资源（favicon.svg、404.html 等，构建时原样复制到 dist 根目录）
+├── public/                  # 静态资源（logo.svg、404.html 等，构建时原样复制到 dist 根目录）
 ├── src/
 │   ├── components/          # 组件：页头/页脚/占位图/卡片等
 │   ├── layouts/
@@ -42,7 +42,7 @@ npm run preview  # 本地预览构建产物
 | `Footer.astro` / `contact.astro` | 地址、电话、邮箱 | 目前为占位信息 |
 | `Layout.astro` | JSON-LD 中的域名/邮箱 | 上线后替换为正式域名 |
 | `astro.config.mjs` | `site` 字段 | 换成正式域名 |
-| `workshops.astro` 车间描述与参数 | 四大车间的真实描述、设备与产能参数 | 图片按同名文件覆盖即可 |
+| `workshops.astro` 车间描述与参数 | 5 大部分、13 个车间的描述、设备参数与工艺特点 | 图片按同名文件覆盖即可 |
 
 ## 日常维护：改文字 / 加图片视频 / 发布
 
@@ -73,12 +73,33 @@ npm run preview  # 本地预览构建产物
 
 ### 加视频
 
-1. 把 MP4 放进 `public/videos/`；
-2. 到首页的 `<VideoPlaceholder />` 处加 `src`（可选 `poster` 封面）：
+1. 把 MP4 放进 `public/videos/`（封面图同名放 `video.jpg` 即可）；
+2. 到首页的 `<VideoPlaceholder />` 处加 `src` 与 `poster`：
    ```
-   <VideoPlaceholder src="/videos/brand.mp4" poster="/images/poster.jpg" label="品牌视频" />
+   <VideoPlaceholder src="/videos/video.mp4" poster="/videos/video.jpg" label="品牌视频" />
    ```
-3. 想用 B站 / YouTube / 腾讯视频嵌入，直接把 `<VideoPlaceholder />` 换成对应 iframe。
+   > 只要视频还没开始播放，窗口里显示的就是 `poster` 封面图。
+3. 播放器固定在 16:9 窗口内播放（宽为内容的 3/4），**不提供全屏**（`controlsList="nofullscreen"` + 画中画禁用 + 脚本兜底），符合"只允许窗口播放"的要求。
+4. 想用 B站 / YouTube / 腾讯视频嵌入，直接把 `<VideoPlaceholder />` 换成对应 iframe。
+
+**导出视频时必须满足的规格**（这是踩过坑的清单，务必照做）：
+
+| 项目 | 规格 | 原因 |
+|---|---|---|
+| **视频编码** | **H.264（AVC）**，不要 H.265 / HEVC | 实测 4K H.265 在 Chrome 里时间轴在走但**一帧都解不出来**（只有声音没有画面）；Firefox 完全不支持 HEVC |
+| 封装 / 音频 | MP4 容器 + AAC 音频（128 kbps） | 全平台通用 |
+| 分辨率 / 帧率 | 1920×1080 或 1280×720，25 或 30 fps | 网页播放足够 |
+| 码率 | **不超过 2 Mbps** | 5 分钟片子按 2 Mbps 约 78 MB；按 3 Mbps 就是 117 MB，**超过 GitHub 单文件 100 MB 硬上限会直接拒收推送** |
+| 体积 | **≤ 100 MB（硬性），建议 ≤ 50 MB** | GitHub 单文件上限 100 MB；EdgeOne「直接上传」单文件上限 25 MB |
+| 优化选项 | 勾选「Web 优化 / 流式 / Fast Start / Optimize for streaming」 | 让索引 `moov` 位于文件开头，浏览器可边下边播；否则 iPhone 可能完全无法播放 |
+| 封面 | 16:9，1920×1080 即可 | 与播放器 16:9 窗口吻合，不会拉伸变形 |
+
+**导完自检**（两条命令，能看出编码、码率、索引位置是否合格）：
+
+```
+node scripts/mp4-info.mjs  public/videos/video.mp4   # 看 编码 / 码率 / moov 位置
+node scripts/mp4-faststart.mjs public/videos/video.mp4   # 若 moov 在尾部，无损重排到开头（原文件备份到 originals/videos/，不入仓库）
+```
 
 ### 公司位置地图
 

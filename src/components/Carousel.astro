@@ -4,13 +4,13 @@
  *
  * 用法：
  *   <Carousel slides={[{ src: '/images/company/slider-1.jpg', alt: '厂区外景' }, ...]} />
- * 特性：自动播放（默认 5 秒）、左右箭头、底部圆点、鼠标悬停暂停、
+ * 特性：自动播放（默认 5 秒）、左右箭头、底部圆点、右下角页码、鼠标悬停暂停、
  *      支持 prefers-reduced-motion（用户系统设置"减少动态效果"时停止自动播放）。
+ * 说明：左下角图注已移除，画面上只保留图片本身。
  */
 interface Slide {
   src: string;
   alt: string;
-  caption?: string;
 }
 
 interface Props {
@@ -30,7 +30,6 @@ const { slides, aspect = '4 / 3', interval = 5000 } = Astro.props;
       slides.map((slide, i) => (
         <figure class:list={['carousel__slide', { 'is-active': i === 0 }]}>
           <img src={slide.src} alt={slide.alt} loading={i === 0 ? 'eager' : 'lazy'} />
-          {slide.caption && <figcaption class="carousel__caption">{slide.caption}</figcaption>}
         </figure>
       ))
     }

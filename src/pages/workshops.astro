@@ -4,100 +4,464 @@ import SectionHeading from '../components/SectionHeading.astro';
 import PlaceholderImage from '../components/PlaceholderImage.astro';
 
 /**
- * 车间概貌：四大车间
- * 图片占位说明：每个车间 3 张（1 张 1600×900 大图 + 2 张 1200×900 细节图）
- * 占位图左上角小方块数 = 该车间内的第几张（1 = 大图，2/3 = 细节图）
- * 替换方式：把真实照片按同名放入 public/images/workshops/ 覆盖即可
+ * 厂区展示：5 大部分、13 个车间
+ * 每个车间 = 1 张大图 + 2 张小图（图片区统一宽度）+ 右侧简要注释
+ * 车间可带 specs（该车间机器特性明细）；部分末尾带 craft（该工序工艺特点）
+ * 图片：真实照片按同名覆盖 public/images/workshops/ 或 public/images/factory/ 即可
  */
-const workshops = [
-  {
-    id: 'cold-heading',
-    eyebrow: 'COLD HEADING WORKSHOP',
-    title: '冷镦车间',
-    desc: '采用多工位冷镦成型工艺，从盘料一次成型螺栓、螺母及各类异形件。材料利用率高、生产效率快，金属流线连续不断，产品强度与一致性明显优于切削加工。',
-    specs: [
-      ['主要设备', '多工位冷镦机 12 台（占位）'],
-      ['加工范围', 'M3 ~ M16、异形件（占位）'],
-      ['日产能', '约 80 万件（占位）'],
-      ['品质管控', '在线尺寸检测 + 首件确认（占位）'],
+
+/** 各工序的工艺特点（放在本节所有车间之后） */
+const crafts = {
+  coldHeading: {
+    title: '冷镦工艺特点',
+    hint: '常温塑性成形与切削加工的核心差异',
+    points: [
+      {
+        no: '01',
+        title: '材料利用率高',
+        desc: '无切屑成形，冷镦件材料利用率普遍在 80% 以上，六角头螺栓等产品可接近 99%，远高于切削加工。',
+      },
+      {
+        no: '02',
+        title: '纤维连续、强度更高',
+        desc: '金属纤维不被切断、内部组织被压实，冷镦螺栓抗拉强度比切削加工提高约 10%（部分可达 20%）。',
+      },
+      {
+        no: '03',
+        title: '精度与表面',
+        desc: '尺寸精度可达 IT7 ~ IT8，表面粗糙度 Ra 0.2 ~ 0.6 μm，牙型与头部一次成形，尺寸一致性好。',
+      },
+      {
+        no: '04',
+        title: '生产率高',
+        desc: '冷镦替代切削加工可使生产率提高几倍至几十倍，螺母类零件较原切削工艺约提高 25 ~ 30 倍。',
+      },
     ],
-    images: [
-      '/images/workshops/cold-heading-1.jpg',
-      '/images/workshops/cold-heading-2.png',
-      '/images/workshops/cold-heading-3.png',
+    limit:
+      '工艺限制：要求材料高塑性、低硬度（钢材表面硬度一般 75 ~ 85 HRB），坯料直径公差要小、表面不得有划伤麻斑；变形程度过大或形状过于复杂时需中间退火、分工序镦锻；模具投入较高，极小批量不如切削加工经济——接单前我们会按图纸确认成形方案。',
+  },
+  threadRolling: {
+    title: '搓牙工艺特点',
+    hint: '滚压成形与切削加工的核心差异',
+    points: [
+      {
+        no: '01',
+        title: '无屑成形',
+        desc: '靠材料塑性位移成形，不产生切屑，材料利用率高，生产率比车削成倍提升。',
+      },
+      {
+        no: '02',
+        title: '纤维连续',
+        desc: '金属纤维沿牙型连续变形而不被切断，牙根强度与抗疲劳性能更好。',
+      },
+      {
+        no: '03',
+        title: '冷作硬化',
+        desc: '表层经冷作硬化，硬度可达约 330 HV（切削螺纹约 220 HV），耐磨性显著提高。',
+      },
+      {
+        no: '04',
+        title: '精度与外观',
+        desc: '螺纹精度可达 2 级，表面粗糙度优于车削与磨削，牙型饱满、尺寸稳定。',
+      },
+    ],
+    limit:
+      '工艺限制：坯料硬度一般不宜超过 HRC40，对毛坯尺寸精度要求较高，牙形不对称的螺纹不适用——接单前我们会按图纸提前确认。',
+  },
+  cnc: {
+    title: '数控加工工艺特点',
+    hint: '相对普通机床与传统加工方式的核心差异',
+    points: [
+      {
+        no: '01',
+        title: '精度高且稳定',
+        desc: '定位与重复定位精度高，程序正确则同批零件尺寸一致；加工精度可达 IT6 ~ IT7，重复定位精度可达 0.005 mm 级。',
+      },
+      {
+        no: '02',
+        title: '表面质量好',
+        desc: '恒线速切削让端面与各段外圆的表面粗糙度保持一致，精车表面粗糙度可达 Ra 0.4 ~ 1.6 μm。',
+      },
+      {
+        no: '03',
+        title: '复杂型面、柔性换产',
+        desc: '圆弧插补可加工常规方法难以加工的复杂型面；改变形状尺寸只需修改程序，不必重做工装，多品种中小批量同样划算。',
+      },
+      {
+        no: '04',
+        title: '一次装夹多工序',
+        desc: '一次装夹完成车、铣、钻、镗、攻，省去划线找正，减少装夹次数与定位误差累积，效率比普通机床提高 2 ~ 3 倍。',
+      },
+    ],
+    limit:
+      '工艺限制：设备与编程投入较高，需对刀、编程与工艺准备，形状简单、批量很大的零件不如冷镦或自动车床经济；精度等级每提高一级，加工成本明显上升——报价前我们会按图纸确认精度等级是否必要。',
+  },
+  optical: {
+    title: '光学筛选工艺特点',
+    hint: '出货前全检与人工目检的核心差异',
+    points: [
+      {
+        no: '01',
+        title: '非接触全检',
+        desc: '相机拍摄判断，不接触、不划伤工件，逐支检测替代人工目检，避免人眼疲劳与人为判错。',
+      },
+      {
+        no: '02',
+        title: '多项目一次过机',
+        desc: '同一件产品可同时检测外形尺寸与多类外观缺陷，尺寸与外观无需分序，一次过机完成。',
+      },
+      {
+        no: '03',
+        title: '留档可追溯',
+        desc: '每件拍照留档，自动统计合格率与不良率，可按批次回溯，便于品质分析与客诉倒查。',
+      },
+      {
+        no: '04',
+        title: '效率与人力',
+        desc: '筛选速度 200 ~ 1200 个/分钟，一人可看多台，替代大量人工挑选工位。',
+      },
+    ],
+    limit:
+      '工艺限制：只能检测可见的外观与二维尺寸，深孔内螺纹需另配通止规机（M6 ~ M16）复核；工件需统一朝向，朝向一致时筛选速度会下降；抛光件、油污表面与位置随机的浅划痕存在检测盲区——检测项与验收标准我们会与客户逐项确认。',
+  },
+  packing: {
+    title: '包装工艺特点',
+    hint: '自动计数包装与人工数装的差异',
+    points: [
+      {
+        no: '01',
+        title: '计数准确',
+        desc: '光纤光电计数 + PLC 程序控制，1000 粒误差不超过 1 粒，避免人工数错、少数。',
+      },
+      {
+        no: '02',
+        title: '效率高',
+        desc: '包装速度 25 ~ 180 包/分钟（常规机型 30 ~ 70 包/分钟），一人可看多台，替代大量数装工位。',
+      },
+      {
+        no: '03',
+        title: '外观统一',
+        desc: '三边封 / 背封制袋，可按客户要求在袋上印字贴标，外观统一。',
+      },
+      {
+        no: '04',
+        title: '过程可查',
+        desc: '缺料、无料自动停机报警，包装数量实时显示；完成后按批次登记入库，数量可追溯。',
+      },
+    ],
+    limit:
+      '工艺限制：适合螺丝、螺母、垫片等规则形状产品，异形件或带方向要求的产品需专用治具；混装或大数量装袋需单独评估——下单前我们会确认包装形式、每包数量与袋型。',
+  },
+};
+
+const parts = [
+  {
+    id: 'part-1',
+    eyebrow: 'PART 01',
+    title: '冷镦成型',
+    craft: crafts.coldHeading,
+    desc: '多工位冷镦与常规冷镦产线：在常温下靠塑性变形把头部、杆部与台阶一次成形，无切屑、材料利用率高，纤维流线连续。',
+    items: [
+      {
+        id: 'multi-station',
+        compact: true,
+        title: '多工位冷镦生产车间',
+        en: 'MULTI-STATION COLD HEADING WORKSHOP',
+        desc: '配二模四冲 / 四模四冲多工位冷镦机，一次装夹多工位连续成形，头部、杆部与台阶一次做出，避免反复装夹的误差累积。适合螺母、内六角螺钉、多台阶异形件等批量大的产品。',
+        specs: [
+          { k: '型号 / 别称', v: '二模四冲 / 四模四冲多工位冷镦机' },
+          { k: '可制外径', v: 'Φ3 ~ Φ16 mm' },
+          { k: '可制长度', v: '10 ~ 200 mm' },
+          { k: '每分钟产量', v: '50 ~ 110 个' },
+        ],
+        note: '检测：首件确认 + 过程抽检',
+        images: [
+          '/images/workshops/cold-heading-1.jpg',
+          '/images/workshops/cold-heading-2.jpg',
+          '/images/workshops/cold-heading-3.jpg',
+        ],
+      },
+      {
+        id: 'cold-heading-screw',
+        compact: true,
+        title: '冷镦螺丝生产车间',
+        en: 'COLD HEADING SCREW WORKSHOP',
+        desc: '配一模二冲打头机（螺丝成型机），专做螺丝头部成型，与搓牙、光学筛选串联成线，头型与杆长按图定制，适合机丝、自攻螺丝、家具螺丝等常规规格。',
+        specs: [
+          { k: '型号 / 别称', v: '一模二冲打头机 / 螺丝成型机' },
+          { k: '可制外径', v: 'Φ4 ~ Φ9 mm' },
+          { k: '可制长度', v: '5 ~ 150 mm' },
+          { k: '每分钟产量', v: '50 ~ 200 个' },
+        ],
+        note: '检测：首件确认 + 过程抽检',
+        images: [
+          '/images/factory/cold-heading-screw.png',
+          '/images/factory/cold-heading-screw-2.png',
+          '/images/factory/cold-heading-screw-3.png',
+        ],
+      },
+      {
+        id: 'cold-heading-general',
+        compact: true,
+        title: '一般冷镦生产车间',
+        en: 'GENERAL COLD HEADING WORKSHOP',
+        desc: '配 Z12 系列双击整模冷镦机（一模二冲），结构简单、换模快，适合形状相对简单、批量中小的常规冷镦件与非标小件，也多用于新产品小批量试产。',
+        specs: [
+          { k: '型号 / 别称', v: 'Z12 系列双击整模冷镦机' },
+          { k: '可制外径', v: 'Φ2 ~ Φ24 mm' },
+          { k: '可制长度', v: '3 ~ 300 mm' },
+          { k: '每分钟产量', v: '32 ~ 100 个' },
+        ],
+        note: '检测：首件确认 + 过程抽检',
+        images: [
+          '/images/factory/cold-heading-general.png',
+          '/images/factory/cold-heading-general-2.png',
+          '/images/factory/cold-heading-general-3.png',
+        ],
+      },
     ],
   },
   {
-    id: 'cnc',
-    eyebrow: 'CNC MACHINING WORKSHOP',
-    title: 'CNC 车间',
-    desc: '配置数控车床与加工中心，支持车铣复合加工，适合结构复杂、公差要求严格的产品；小批量多品种与批量订单均可灵活承接。',
-    specs: [
-      ['主要设备', '数控车床 / 加工中心 20 台（占位）'],
-      ['加工精度', '±0.01 mm（占位）'],
-      ['适用材质', '碳钢、不锈钢、铝、铜（占位）'],
-      ['交付形式', '打样 + 批量交付（占位）'],
-    ],
-    images: [
-      '/images/workshops/cnc-1.jpg',
-      '/images/workshops/cnc-2.jpg',
-      '/images/workshops/cnc-3.jpg',
+    id: 'part-2',
+    eyebrow: 'PART 02',
+    title: '搓牙',
+    craft: crafts.threadRolling,
+    desc: '螺纹滚压成型工序：两块搓丝板错开半个螺距相对布置，静板固定、动板往复搓压，金属纤维沿牙型连续变形而不被切断，牙型饱满、强度优于切削。',
+    items: [
+      {
+        id: 'rolling-0',
+        thumbAspect: '1/1',
+        title: '0# 搓牙机车间',
+        en: '0# THREAD ROLLING WORKSHOP',
+        desc: '配 0# 搓牙机（零号机），主要用于 M0.6 ~ M3.0 电子螺丝。',
+        specs: [
+          { k: '可加工螺纹直径', v: '0.6 ~ 3.0 mm' },
+          { k: '可加工长度', v: '≤ 25 mm' },
+          { k: '每分钟产量', v: '190 ~ 325 个' },
+        ],
+        note: '检测：通止规全检 + 抽检',
+        images: [
+          '/images/factory/rolling-0-1.png',
+          '/images/factory/rolling-0-2.png',
+        ],
+      },
+      {
+        id: 'rolling-15',
+        thumbAspect: '1/1',
+        title: '一分半搓牙机车间',
+        en: '1.5 THREAD ROLLING WORKSHOP',
+        desc: '“一分半”指 3/16″ 牙板规格，覆盖 M3 ~ M6 机丝与自攻螺丝。',
+        specs: [
+          { k: '可加工螺纹直径', v: '≤ 6 mm（常规 M3 ~ M6）' },
+          { k: '可加工长度', v: '≤ 55 mm' },
+          { k: '每分钟产量', v: '160 ~ 180 个' },
+        ],
+        note: '检测：通止规全检 + 抽检｜换模后首件确认',
+        images: [
+          '/images/factory/rolling-15-1.png',
+          '/images/factory/rolling-15-2.png',
+        ],
+      },
+      {
+        id: 'rolling-large',
+        thumbAspect: '1/1',
+        title: '大型搓丝机车间',
+        en: 'LARGE THREAD ROLLING WORKSHOP',
+        desc: '配大型搓丝机，用于 M4 ~ M24 双头螺柱、地脚螺栓等长杆件。',
+        specs: [
+          { k: '可加工螺纹直径', v: '4 ~ 24 mm（或更大）' },
+          { k: '可加工长度', v: '100 ~ 600 mm（或更长）' },
+          { k: '每分钟产量', v: '30 ~ 100 个' },
+        ],
+        note: '检测：通止规全检 + 抽检',
+        images: [
+          '/images/factory/rolling-large-1.png',
+          '/images/factory/rolling-large-2.png',
+        ],
+      },
     ],
   },
   {
-    id: 'thread-rolling',
-    eyebrow: 'THREAD ROLLING WORKSHOP',
-    title: '搓牙车间',
-    desc: '通过搓丝机对工件进行螺纹滚压成型，牙型饱满、表面光洁，螺纹强度较切削加工显著提升，适合大批量标准紧固件的稳定生产。',
-    specs: [
-      ['主要设备', '平板搓丝机 / 行星搓丝机（占位）'],
-      ['螺纹范围', 'M2 ~ M20（占位）'],
-      ['日产能', '约 120 万件（占位）'],
-      ['检测方式', '通止规全检 + 抽检（占位）'],
-    ],
-    images: [
-      '/images/workshops/thread-rolling-1.png',
-      '/images/workshops/thread-rolling-2.png',
-      '/images/workshops/thread-rolling-3.png',
+    id: 'part-3',
+    eyebrow: 'PART 03',
+    title: '数控加工',
+    craft: crafts.cnc,
+    desc: '大型与小型数控设备并行，配合自动化车床：程序控制、恒线速切削，一次装夹完成车铣钻镗攻，覆盖大规格重切削到小规格精密件。',
+    items: [
+      {
+        id: 'large-cnc',
+        compact: true,
+        title: '大型数控生产车间',
+        en: 'LARGE CNC WORKSHOP',
+        desc: '配大型数控车床与立式加工中心，一次装夹完成车、铣、钻、镗多道工序，省去划线找正，恒线速切削保证表面粗糙度一致，适合大规格、公差要求严格的产品。',
+        specs: [
+          { k: '型号 / 别称', v: '大型数控车床 / 立式加工中心' },
+          { k: '可加工直径', v: '盘类 Φ400 ~ Φ800 mm｜轴类 Φ290 ~ Φ430 mm' },
+          { k: '可加工长度', v: '最大车削长度 600 ~ 2850 mm' },
+          { k: '加工精度', v: 'IT6 ~ IT7｜重复定位精度 0.005 ~ 0.015 mm' },
+        ],
+        note: '检测：首件全尺寸检测 + 过程抽检',
+        images: [
+          '/images/workshops/cnc-1.jpg',
+        ],
+      },
+      {
+        id: 'small-cnc',
+        compact: true,
+        title: '小型数控生产车间',
+        en: 'SMALL CNC WORKSHOP',
+        desc: '配小型精密数控车床（走心机 / 纵切车床），导套支撑抑制细长件变形，副主轴可一次装夹完成背面加工；换型只需改程序，打样周期短，适合小规格精密件。',
+        specs: [
+          { k: '型号 / 别称', v: '小型精密数控车床 / 数控走心机' },
+          { k: '可加工直径', v: 'Φ0.5 ~ Φ20 mm（棒料 ≤ Φ32 mm）' },
+          { k: '可加工长度', v: '50 ~ 205 mm（视导套模式）' },
+          { k: '加工精度', v: '尺寸精度稳定在 0.005 mm 内｜圆度可达 0.002 mm' },
+        ],
+        note: '检测：首件全尺寸检测 + 过程抽检',
+        images: [
+          '/images/workshops/cnc-2.jpg',
+        ],
+      },
+      {
+        id: 'auto-lathe',
+        compact: true,
+        title: '自动化车床生产车间',
+        en: 'AUTOMATED LATHE WORKSHOP',
+        desc: '配凸轮式自动车床，多组刀架与尾轴同时切削，一件产品的多道工序一次走完；料完自动停车报警，无需人工看料，一人可看多台，适合批量车削件。',
+        specs: [
+          { k: '型号 / 别称', v: '凸轮式自动车床（走心式 / 走刀式）' },
+          { k: '可加工长度', v: '35 ~ 120 mm（特殊尾座最长 200 mm）' },
+          { k: '每分钟产量', v: '约 30 个/分钟' },
+          { k: '尺寸控制精度', v: '0.005 mm（综合精度一般 ±0.01 mm）' },
+        ],
+        note: '检测：首件全尺寸检测 + 过程抽检',
+        images: [
+          '/images/workshops/cnc-3.jpg',
+        ],
+      },
     ],
   },
   {
-    id: 'optical-sorting',
-    eyebrow: 'OPTICAL SORTING WORKSHOP',
-    title: '光学筛选车间',
-    desc: '采用光学影像筛选设备对产品进行全检，自动剔除尺寸超差、混料、毛刺、缺料等不良品，为出货品质提供最后一道保障。',
-    specs: [
-      ['主要设备', '光学影像筛选机 6 台（占位）'],
-      ['筛选项目', '外径 / 长度 / 螺纹 / 外观（占位）'],
-      ['筛选速度', '约 1200 件 / 分钟（占位）'],
-      ['质量目标', '不良流出率 ≤ 100 ppm（占位）'],
+    id: 'part-4',
+    eyebrow: 'PART 04',
+    title: '光学筛选',
+    craft: crafts.optical,
+    desc: '出货前的全检工序：多支 CCD 相机分站拍摄，同一件产品同时检测外形尺寸与外观缺陷，超差件自动剔除。',
+    items: [
+      {
+        id: 'optical-sorting',
+        title: '光学筛选车间',
+        en: 'OPTICAL SORTING WORKSHOP',
+        desc: '采用玻璃转盘式光学影像筛选机对产品逐支全检：多支 CCD 相机分站拍摄，同一件产品同时检测外形尺寸与多类外观缺陷，超差件由吹气或气缸拨料剔除。可检项目包括头部尺寸、总长、牙外径、牙距、对边对角与同心度，以及开裂、烂牙、斜牙、缺料、毛刺等外观不良，为出货品质提供最后一道保障。',
+        specs: [
+          { k: '型号 / 别称', v: '全自动光学影像筛选机（CCD）' },
+          { k: '相机与工位', v: '1 ~ 8 支相机分站拍摄（机型区间）' },
+          { k: '适用规格', v: '外形 Φ0.1 ~ Φ35 mm｜总高 1 ~ 40 mm' },
+          { k: '检测精度', v: '±0.005 ~ ±0.02 mm' },
+          { k: '筛选速度', v: '200 ~ 1200 个/分钟（随规格与检测项变化）' },
+        ],
+        note: '检测项目：外径 / 长度 / 牙距 / 同心度 / 开裂 / 烂牙 / 缺料 / 毛刺 / 混料',
+        images: [
+          '/images/workshops/optical-sorting-1.jpg',
+          '/images/workshops/optical-sorting-2.jpg',
+          '/images/workshops/optical-sorting-3.jpg',
+        ],
+      },
     ],
-    images: [
-      '/images/workshops/optical-sorting-1.jpg',
-      '/images/workshops/optical-sorting-2.png',
-      '/images/workshops/optical-sorting-3.png',
+  },
+  {
+    id: 'part-5',
+    eyebrow: 'PART 05',
+    title: '仓储',
+    desc: '工具、原料与成品的分区管理，保障产线运行与按期交付。',
+    items: [
+      {
+        id: 'tool-room',
+        title: '工具间',
+        en: 'TOOL ROOM',
+        desc: '模具、刀具的维护、修磨与保管，配合首件确认制度，保障产线持续稳定运行。',
+        note: '职能：模具/刀具维护与修磨｜台账管理｜配合首件确认与换模作业',
+        images: [
+          '/images/factory/tool-room.jpg',
+          '/images/factory/tool-room-2.jpg',
+        ],
+      },
+      {
+        id: 'raw-warehouse',
+        title: '原料仓库',
+        en: 'RAW MATERIAL WAREHOUSE',
+        desc: '原料分区存放、批次可追溯，从来料环节保证品质稳定，按生产计划及时配送。',
+        note: '管理方式：分区存放 + 批次追溯｜来料检验合格后入库｜按计划配送产线',
+        images: [
+          '/images/factory/raw-warehouse.jpg',
+          '/images/factory/raw-warehouse-2.jpg',
+        ],
+      },
+      {
+        id: 'finished-warehouse',
+        title: '成品仓库',
+        en: 'FINISHED GOODS WAREHOUSE',
+        desc: '成品分拣、包装与出货管理，按约定交期准时交付，支持长期合作客户的备货需求。',
+        note: '流程：分拣 — 包装 — 出货登记｜按交期排程发货｜可协商备货与分批交付',
+        images: [
+          '/images/factory/finished-warehouse.jpg',
+          '/images/factory/finished-warehouse-2.png',
+        ],
+      },
+    ],
+  },
+  {
+    id: 'part-6',
+    eyebrow: 'PART 06',
+    title: '包装',
+    craft: crafts.packing,
+    desc: '出货前的计数包装工序：自动计数，按客户要求定袋型与每包数量，完成后按批次登记入库。',
+    items: [
+      {
+        id: 'packing',
+        compact: true,
+        title: '包装车间',
+        en: 'PACKING WORKSHOP',
+        desc: '配全自动螺丝计数包装机，可按客户要求定袋型与每包数量，缺料自动报警。',
+        specs: [
+          { k: '计数精度', v: '1000 粒误差 ≤ 1 粒' },
+          { k: '包装速度', v: '25 ~ 180 包/分钟（常规 30 ~ 70 包/分钟）' },
+          { k: '适用产品', v: '螺丝、螺母、垫片、五金配件' },
+        ],
+        note: '检测：包装数量实时显示 + 缺料自动停机报警｜按批次登记入库',
+        images: [
+          '/images/factory/packing-1.png',
+        ],
+      },
     ],
   },
 ];
+
+/** 工艺特点见文件顶部 crafts */
 ---
 
 <Layout
-  title="车间概貌"
-  description="思晨五金车间概貌——冷镦车间、CNC 车间、搓牙车间、光学筛选车间，覆盖从成型到全检的完整五金制造工序。"
+  title="厂区展示"
+  description="思晨五金厂区展示——冷镦成型、搓牙、数控加工、光学筛选、仓储与包装，完整呈现生产现场与制造能力。"
 >
 
-  <section class="page-hero">
+  <section class="page-hero page-hero--media">
+    <!-- 页头背景大图：换图只需改下面这一行，或把同名文件放进 public/images/company/ 覆盖 -->
+    <div class="page-hero__bg" aria-hidden="true">
+      <img src="/images/company/showfactory.jpg" alt="" />
+    </div>
+    <div class="page-hero__scrim" aria-hidden="true"></div>
     <div class="container">
-      <p class="eyebrow" data-reveal>OUR WORKSHOPS</p>
-      <h1 class="page-hero__title" data-reveal>车间概貌</h1>
+      <p class="eyebrow" data-reveal>OUR FACILITY</p>
+      <h1 class="page-hero__title" data-reveal>厂区展示</h1>
       <p class="page-hero__desc" data-reveal>
-        冷镦、CNC、搓牙、光学筛选四大车间，覆盖从毛坯成型、精密加工到全检出货的完整工序。
+        从冷镦成型、搓牙、数控加工、仓储到光学筛选，完整呈现思晨的生产现场。
       </p>
-      <nav class="anchor-nav" aria-label="车间导航">
+      <nav class="anchor-nav" aria-label="厂区导航">
         {
-          workshops.map((w) => (
-            <a class="anchor-pill" href={`#${w.id}`}>
-              {w.title}
+          parts.map((p) => (
+            <a class="anchor-pill" href={`#${p.id}`}>
+              {p.title}
             </a>
           ))
         }
@@ -106,35 +470,86 @@ const workshops = [
   </section>
 
   {
-    workshops.map((w, i) => (
-      <section class:list={['section', { 'section--alt': i % 2 === 1 }]} id={w.id}>
+    parts.map((part, index) => (
+      <section class:list={['section', { 'section--alt': index % 2 === 1 }]} id={part.id}>
         <div class="container">
-          <div class:list={['split', 'split--lg', { 'split--reverse': i % 2 === 1 }]}>
-            <div class="split__body">
-              <p class="eyebrow" data-reveal>{w.eyebrow}</p>
-              <h2 class="h-section" data-reveal>{w.title}</h2>
-              <p class="lead" data-reveal style="margin-top: 22px">{w.desc}</p>
-              <ul class="spec-list" data-reveal>
-                {w.specs.map(([label, value]) => (
-                  <li>
-                    <span>{label}</span>
-                    <span>{value}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div class="split__media">
-              <PlaceholderImage src={w.images[0]} label={`${w.title} · 全景`} aspect="16/9" />
-            </div>
-          </div>
+          <SectionHeading eyebrow={part.eyebrow} title={part.title} desc={part.desc} />
 
-          <div class="gallery-grid gallery-grid--2" style="margin-top: 1px">
-            {w.images.slice(1).map((src, k) => (
-              <div class="gallery-item" data-reveal>
-                <PlaceholderImage src={src} label={`${w.title} · 细节 ${k + 1}`} aspect="16/9" />
+          {part.items.map((item, itemIndex) => {
+            const no = String(itemIndex + 1).padStart(2, '0');
+            // 图片比例：compact（冷镦 / 数控）用更扁的图；也可用 item.thumbAspect 单独指定
+            const heroAspect = item.compact ? '21/9' : '16/9';
+            const smallAspect = item.thumbAspect ?? (item.compact ? '16/9' : '4/3');
+            return (
+              <article class="shop-feature" id={item.id}>
+                <div class="shop-feature__media">
+                  {item.images.length >= 3 ? (
+                    <>
+                      <div class="shop-feature__hero">
+                        <PlaceholderImage src={item.images[0]} label={`${item.title} · 全景`} aspect={heroAspect} />
+                      </div>
+                      <div class="shop-feature__thumbs">
+                        <PlaceholderImage src={item.images[1]} label={`${item.title} · 细节 1`} aspect={smallAspect} />
+                        <PlaceholderImage src={item.images[2]} label={`${item.title} · 细节 2`} aspect={smallAspect} />
+                      </div>
+                    </>
+                  ) : (
+                    /* 只有 1 ~ 2 张图时：等宽并排，不留空槽 */
+                    <div class="shop-feature__row">
+                      {item.images.map((src, i) => (
+                        <PlaceholderImage
+                          src={src}
+                          label={`${item.title} · ${i === 0 ? '全景' : `细节 ${i}`}`}
+                          aspect={smallAspect}
+                        />
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                <div class="shop-feature__info" data-reveal>
+                  <div class="shop-feature__head">
+                    <span class="shop-feature__index">{no}</span>
+                    <p class="eyebrow">{item.en}</p>
+                  </div>
+                  <h3 class="shop-feature__title">{item.title}</h3>
+                  <p class="shop-feature__desc">{item.desc}</p>
+                  {item.specs && (
+                    <dl class="shop-feature__specs">
+                      {item.specs.map((spec) => (
+                        <div>
+                          <dt>{spec.k}</dt>
+                          <dd>{spec.v}</dd>
+                        </div>
+                      ))}
+                    </dl>
+                  )}
+                  <p class="shop-feature__note">{item.note}</p>
+                </div>
+              </article>
+            );
+          })}
+
+          {
+            part.craft && (
+              <div class="craft-block">
+                <div class="craft-block__head">
+                  <h3 class="craft-block__title">{part.craft.title}</h3>
+                  <p class="craft-block__hint">{part.craft.hint}</p>
+                </div>
+                <ul class="craft-grid">
+                  {part.craft.points.map((point) => (
+                    <li class="craft-item" data-reveal>
+                      <p class="craft-item__no">{point.no}</p>
+                      <h4 class="craft-item__title">{point.title}</h4>
+                      <p class="craft-item__desc">{point.desc}</p>
+                    </li>
+                  ))}
+                </ul>
+                <p class="craft-limit">{part.craft.limit}</p>
               </div>
-            ))}
-          </div>
+            )
+          }
         </div>
       </section>
     ))

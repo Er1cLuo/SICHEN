@@ -14,6 +14,10 @@ const { title, description = '思晨五金制品有限公司——精密五金�
 const siteTitle = title.includes('思晨') ? title : `${title} | 思晨五金制品有限公司`;
 const canonical = Astro.site ? new URL(Astro.url.pathname, Astro.site).href : undefined;
 
+// 社交分享图（1200×630）：图片在 public/images/company/og-cover.jpg，换图同名覆盖即可
+const siteUrl = (Astro.site?.href ?? 'https://www.sicenhardware.com/').replace(/\/$/, '');
+const ogImage = `${siteUrl}/images/company/og-cover.jpg`;
+
 const orgJsonLd = {
   '@context': 'https://schema.org',
   '@type': 'Organization',
@@ -21,7 +25,8 @@ const orgJsonLd = {
   alternateName: 'Sicen Hardware Products Co., Ltd.',
   description: '精密五金制品研发、制造与销售，服务全球工业客户。',
   url: 'https://www.sicenhardware.com/', // 上线后替换为正式域名
-  email: 'info@sicen-hardware.com', // 占位（待启用企业邮箱后替换）
+  logo: 'https://www.sicenhardware.com/logo.svg',
+  email: '2724247155@qq.com', // 企业邮箱
   telephone: '+8613928180479',
   address: {
     '@type': 'PostalAddress',
@@ -46,12 +51,21 @@ const orgJsonLd = {
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{siteTitle}</title>
     <meta name="description" content={description} />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="theme-color" content="#0a0a0b" />
+    <link rel="icon" type="image/svg+xml" href="/logo.svg" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 
     <meta property="og:type" content="website" />
     <meta property="og:title" content={siteTitle} />
     <meta property="og:description" content={description} />
     <meta property="og:site_name" content="思晨五金制品有限公司" />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="思晨五金制品有限公司" />
+    {canonical && <meta property="og:url" content={canonical} />}
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content={ogImage} />
     {canonical && <link rel="canonical" href={canonical} />}
 
     <script type="application/ld+json" set:html={JSON.stringify(orgJsonLd)} />

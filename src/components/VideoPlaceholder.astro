@@ -3,37 +3,77 @@
  * 视频组件（占位 / 真实视频都支持）。
  *
  * 真实视频到位后，给 src 即可（封面 poster 可选）：
- *   <VideoPlaceholder src="/videos/brand.mp4" poster="/images/poster.jpg" label="品牌视频" />
+ *   <VideoPlaceholder src="/videos/video.mp4" poster="/images/company/facade.jpg" label="品牌视频" />
  * 视频文件请放入 public/videos/ 目录（构建时自动复制到站点 /videos/ 路径）。
+ *
+ * 播放策略：只在页面内的固定窗口播放，**不提供全屏**。
+ *   - controlsList="nofullscreen" 让 Chromium 内核（Chrome/Edge）隐藏原生全屏按钮；
+ *   - playsinline 让 iOS 不自动接管全屏；
+ *   - 另有脚本兜底：万一通过其他途径进入全屏（如 Safari 原生控制条），立即退出。
+ * 窗口宽度由外层 .video-frame 控制（默认内容的 3/4，居中）。
  *
  * 也可以直接替换为视频平台嵌入（Bilibili / YouTube / 腾讯视频 iframe）。
  */
 interface Props {
   label?: string;
   hint?: string;
-  /** 真实视频地址，例如 /videos/brand.mp4 */
+  /** 真实视频地址，例如 /videos/video.mp4 */
   src?: string;
-  /** 封面图地址（可选） */
+  /** 封面图地址（可选），建议与视频同为 16:9 */
   poster?: string;
 }
 
-const { label = '品牌视频 · 占位', hint = '建议 1080P · MP4 (H.264)，或替换为视频平台嵌入', src, poster } =
-  Astro.props;
+const { label = '品牌视频', hint, src, poster } = Astro.props;
+
+const mime = src?.endsWith('.webm')
+  ? 'video/webm'
+  : src?.endsWith('.ogv')
+    ? 'video/ogg'
+    : 'video/mp4';
 ---
 
 <div class:list={['video-ph', { 'video-ph--live': !!src }]} data-reveal>
   {
     src ? (
-      <video controls preload="metadata" poster={poster} aria-label={label}>
-        <source src={src} />
+      <video
+        controls
+        playsinline
+        disablepictureinpicture
+        controlslist="nofullscreen noremoteplayback"
+        preload="metadata"
+        poster={poster}
+        aria-label={label}
+      >
+        <source src={src} type={mime} />
         您的浏览器不支持 HTML5 视频播放。
       </video>
     ) : (
       <>
-        <button class="video-ph__play" type="button" aria-label="播放视频（占位）"></button>
+        <button class="video-ph__play" type="button" aria-label="播放视频" />
         <span class="video-ph__label">{label}</span>
-        <span class="video-ph__hint">{hint}</span>
+        {hint && <span class="video-ph__hint">{hint}</span>}
       </>
     )
   }
 </div>
+
+<script>
+  // 兜底：若浏览器（Safari / Firefox 不认 controlsList）仍能进入全屏，则立即退出
+  document.querySelectorAll<HTMLVideoElement>('.video-ph video').forEach((video) => {
+    const doc = document as Document & {
+      webkitFullscreenElement?: Element;
+      webkitExitFullscreen?: () => void;
+    };
+    const vid = video as HTMLVideoElement & { webkitExitFullscreen?: () => void };
+
+    const exitIfFullscreen = () => {
+      if (document.fullscreenElement) document.exitFullscreen?.().catch(() => {});
+      else if (doc.webkitFullscreenElement) doc.webkitExitFullscreen?.();
+      else if (vid.webkitDisplayingFullscreen) vid.webkitExitFullscreen?.();
+    };
+
+    document.addEventListener('fullscreenchange', exitIfFullscreen);
+    document.addEventListener('webkitfullscreenchange', exitIfFullscreen);
+    video.addEventListener('webkitbeginfullscreen', exitIfFullscreen);
+  });
+</script>

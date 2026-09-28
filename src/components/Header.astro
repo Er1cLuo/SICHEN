@@ -9,9 +9,12 @@ const nav = [
   { href: '/', label: '首页' },
   { href: '/about', label: '关于我们' },
   { href: '/products', label: '产品中心' },
-  { href: '/workshops', label: '车间概貌' },
-  { href: '/contact', label: '联系我们' },
+  { href: '/workshops', label: '厂区展示' },
 ];
+
+// 桌面端右侧已有白底「联系我们」按钮，导航里不再重复；
+// 手机端按钮隐藏，所以全屏菜单里补上「联系我们」。
+const mobileNav = [...nav, { href: '/contact', label: '联系我们' }];
 
 const isActive = (href: string) => (href === '/' ? current === '/' : current.startsWith(href));
 ---
@@ -19,11 +22,8 @@ const isActive = (href: string) => (href === '/' ? current === '/' : current.sta
 <header class="site-header" id="siteHeader">
   <div class="container site-header__inner">
     <a class="brand" href="/" aria-label="思晨五金制品有限公司 首页">
-      <span class="brand__mark" aria-hidden="true">
-        <svg viewBox="0 0 32 32" fill="none">
-          <path d="M16 3 28 10.5v11L16 29 4 21.5v-11z" stroke="#f4f4f0" stroke-width="1.3" />
-          <circle cx="16" cy="16" r="4.6" stroke="#f4f4f0" stroke-width="1.3" />
-        </svg>
+      <span class="brand__mark">
+        <img src="/logo.svg" alt="思晨五金 logo" width="40" height="40" />
       </span>
       <span class="brand__text">
         <span class="brand__name">思晨五金</span>
@@ -41,7 +41,11 @@ const isActive = (href: string) => (href === '/' ? current === '/' : current.sta
       }
     </nav>
 
-    <a class="btn btn--solid btn--sm nav__cta" href="/contact">联系我们</a>
+    <a
+      class="btn btn--solid btn--sm nav__cta"
+      href="/contact"
+      aria-current={isActive('/contact') ? 'page' : undefined}>联系我们</a
+    >
 
     <button class="hamburger" id="menuToggle" type="button" aria-label="打开菜单" aria-expanded="false">
       <span></span>
@@ -51,7 +55,7 @@ const isActive = (href: string) => (href === '/' ? current === '/' : current.sta
 
   <div class="mobile-menu" id="mobileMenu">
     {
-      nav.map((item) => (
+      mobileNav.map((item) => (
         <a class="mobile-menu__link" href={item.href}>
           {item.label}
         </a>

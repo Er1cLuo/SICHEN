@@ -10,76 +10,106 @@ import Carousel from '../components/Carousel.astro';
 const stats = [
   { num: '15', suffix: '+', label: '年行业深耕' },
   { num: '500', suffix: '+', label: '服务客户' },
-  { num: '30', suffix: '+', label: '出口国家与地区' },
+  { num: '15', suffix: '+', label: '出口国家与地区' },
   { num: '98.5', suffix: '%', label: '一次交验合格率' },
 ];
 
 const businesses = [
   {
-    title: '精密冲压件',
-    desc: '高精度连续模冲压，支持多工位成型，广泛应用于家电、汽车与电子行业。',
-    tag: 'STAMPING',
-    src: '/images/products/stamping-1.png',
+    title: '冷镦紧固件',
+    desc: '螺丝、螺母等冷镦紧固件，规格齐全，头型、牙型与表面处理可按图纸定制。',
+    tag: 'COLD HEADING FASTENERS',
+    src: '/images/products/screw/screw-4.jpg',
+    href: '/products#screw',
   },
   {
-    title: '精密机加工件',
-    desc: 'CNC 车铣复合加工，尺寸公差稳定，满足小批量到大批量灵活交付。',
-    tag: 'MACHINING',
-    src: '/images/products/machining-1.png',
+    title: '多工位异形件',
+    desc: '多工位冷镦一次成型的异形件，替代多道切削工序，强度与效率更优。',
+    tag: 'MULTI-STATION SPECIAL PARTS',
+    src: '/images/products/special/special-1.jpg',
+    href: '/products#special',
   },
   {
-    title: '紧固件与连接件',
-    desc: '螺丝、螺母、铆钉等标准与非标紧固件，材质与表面处理可按需定制。',
-    tag: 'FASTENERS',
-    src: '/images/products/fasteners-1.png',
+    title: '车床件',
+    desc: '自动车床与数控走心机加工的回转体零件，轴类、套类与异形小件，尺寸一致性好。',
+    tag: 'CNC TURNED PARTS',
+    src: '/images/products/turning/turning-1.png',
+    href: '/products#turning',
   },
   {
-    title: '钣金与表面处理',
-    desc: '钣金折弯、焊接与电镀、氧化等表面处理一站式配套服务。',
-    tag: 'FINISHING',
-    src: '/images/products/finishing-1.png',
+    title: '垫片/配套件',
+    desc: '平垫、弹垫及各类配套件，冲压成型、尺寸稳定，可与紧固件配套供应。',
+    tag: 'WASHERS & ACCESSORIES',
+    src: '/images/products/washer/washer-1.png',
+    href: '/products#washer',
   },
 ];
 
-// 车间概貌（首页展示 4 个车间，详情见 /workshops）
-// 图片：每个车间 3 张，这里用第 1 张（大图）；占位图左上角方块数=序号
+// 厂区展示（首页展示 5 大部分，详情见 /workshops）
 const workshops = [
   {
-    id: 'cold-heading',
-    eyebrow: 'COLD HEADING',
-    title: '冷镦车间',
-    summary: '多工位冷镦一次成型，材料利用率高、强度好，适合螺栓螺母与异形件的批量生产。',
+    id: 'part-1',
+    eyebrow: 'PART 01',
+    title: '冷镦成型',
+    summary: '多工位冷镦生产车间、冷镦螺丝生产车间与一般冷镦生产车间。',
     src: '/images/workshops/cold-heading-1.jpg',
   },
   {
-    id: 'cnc',
-    eyebrow: 'CNC MACHINING',
-    title: 'CNC 车间',
-    summary: '数控车床与加工中心，支持车铣复合加工，精度可达 ±0.01 mm。',
-    src: '/images/workshops/cnc-1.jpg',
-  },
-  {
-    id: 'thread-rolling',
-    eyebrow: 'THREAD ROLLING',
-    title: '搓牙车间',
-    summary: '螺纹滚压成型，牙型饱满、表面光洁，螺纹强度优于切削加工。',
+    id: 'part-2',
+    eyebrow: 'PART 02',
+    title: '搓牙',
+    summary: '0# 搓牙机、一分半搓牙机与大型搓丝机三个车间，覆盖 M0.6 ~ M24 螺纹。',
     src: '/images/workshops/thread-rolling-1.png',
   },
   {
-    id: 'optical-sorting',
-    eyebrow: 'OPTICAL SORTING',
-    title: '光学筛选车间',
+    id: 'part-3',
+    eyebrow: 'PART 03',
+    title: '数控加工',
+    summary: '大型数控生产车间、小型数控生产车间与自动化车床生产车间。',
+    src: '/images/workshops/cnc-1.jpg',
+  },
+  {
+    id: 'part-4',
+    eyebrow: 'PART 04',
+    title: '光学筛选',
     summary: '光学影像全检，自动剔除尺寸超差、混料、毛刺等不良品。',
     src: '/images/workshops/optical-sorting-1.jpg',
   },
+  {
+    id: 'part-5',
+    eyebrow: 'PART 05',
+    title: '仓储',
+    summary: '工具间、原料仓库与成品仓库，分区管理、批次可追溯。',
+    src: '/images/factory/raw-warehouse.jpg',
+  },
+  {
+    id: 'part-6',
+    eyebrow: 'PART 06',
+    title: '包装',
+    summary: '自动计数包装，1000 粒误差不超过 1 粒，按批次登记入库。',
+    src: '/images/factory/packing-1.png',
+  },
 ];
 
-// 公司概貌轮播图（4 张）——占位图左上角的小方块个数就是序号：slider-1 ~ slider-4
+// 公司概貌轮播图（4 张）
 const overviewSlides = [
-  { src: '/images/company/slider-1.jpg', alt: '公司厂区外景', caption: '厂区外景' },
-  { src: '/images/company/slider-2.jpg', alt: '生产车间全景', caption: '生产车间' },
-  { src: '/images/company/slider-3.png', alt: '办公与产品展厅', caption: '办公与展厅' },
-  { src: '/images/company/slider-4.png', alt: '团队与品质管理', caption: '团队与品质' },
+  { src: '/images/company/slider-1.jpg', alt: '公司厂区外景' },
+  { src: '/images/company/slider-2.jpg', alt: '生产车间全景' },
+  { src: '/images/company/slider-3.jpg', alt: '办公与产品展厅' },
+  { src: '/images/company/slider-4.jpg', alt: '团队与品质管理' },
+  { src: '/images/company/slider-5.png', alt: '公司概貌 · 第 5 张' },
+];
+
+// 涉及领域（8 个，各配一张矢量概念图）
+const industries = [
+  { title: '新能源', en: 'NEW ENERGY', src: '/images/industries/energy.jpg' },
+  { title: '汽车制造', en: 'AUTOMOTIVE', src: '/images/industries/automotive.jpg' },
+  { title: '建筑工程', en: 'CONSTRUCTION', src: '/images/industries/construction.jpg' },
+  { title: '自动化器械', en: 'AUTOMATION', src: '/images/industries/automation.jpg' },
+  { title: '信息通讯', en: 'TELECOM', src: '/images/industries/telecom.jpg' },
+  { title: '办公设备', en: 'OFFICE EQUIPMENT', src: '/images/industries/office.jpg' },
+  { title: '家用电器', en: 'HOME APPLIANCES', src: '/images/industries/appliance.jpg' },
+  { title: '模具机床', en: 'MOLD & MACHINE TOOLS', src: '/images/industries/mold.jpg' },
 ];
 ---
 
@@ -101,7 +131,6 @@ const overviewSlides = [
       <h1 class="hero__title" data-reveal>
         以精密之心<br />铸工业之<em>美</em>
       </h1>
-      <!-- 演示：这段是正文文字，可直接编辑 -->
       <p class="hero__desc" data-reveal>
         思晨五金制品有限公司，专注精密冲压件、CNC 机加工件、紧固件等五金制品的
         研发、制造与交付。以严谨工艺、稳定品质与可靠交期，服务全球工业客户。
@@ -125,7 +154,6 @@ const overviewSlides = [
             title="匠心制造，值得信赖"
             desc="思晨五金制品有限公司是一家专注于五金制品研发、制造与销售的企业，产品涵盖精密冲压件、精密机加工零件、紧固件、钣金件等，广泛应用于家电、汽车、电子与机械装备等行业。"
           />
-          <!-- 演示：下面的段落文字直接在页面文件里修改 -->
           <p data-reveal>
             公司坚持“品质为先、客户至上”的经营理念，建立了覆盖来料检验、过程控制与出货检验的
             全流程质量管理体系，确保从图纸到交付的每一个环节都稳定可控。
@@ -137,7 +165,7 @@ const overviewSlides = [
             <a class="btn btn--ghost" href="/about">更多关于我们 →</a>
           </div>
         </div>
-        <!-- 公司概貌轮播图：替换 public/images/company/slider-1 ~ slider-4.png 即可（左上角方块数=序号） -->
+      <!-- 公司概貌轮播图（5 张）：替换 public/images/company/slider-1 ~ slider-5 同名文件即可 -->
         <div class="split__media">
           <Carousel slides={overviewSlides} aspect="4 / 3" />
         </div>
@@ -151,13 +179,44 @@ const overviewSlides = [
       <SectionHeading
         eyebrow="OUR BUSINESS"
         title="核心业务"
-        desc="从标准件到精密定制件，思晨为客户提供一站式的五金制品解决方案。产品图已预留同名占位，真实图片同名覆盖即可。"
+        desc="从标准件到精密定制件，思晨为客户提供一站式的五金制品解决方案。"
         align="center"
       />
       <div class="card-grid" style="margin-top: 56px">
         {
           businesses.map((item) => (
-            <ProductCard title={item.title} desc={item.desc} tag={item.tag} src={item.src} />
+            <ProductCard
+              title={item.title}
+              desc={item.desc}
+              tag={item.tag}
+              src={item.src}
+              href={item.href}
+            />
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- ======== 涉及领域 ======== -->
+  <section class="section">
+    <div class="container">
+      <SectionHeading
+        eyebrow="INDUSTRIES WE SERVE"
+        title="涉及领域"
+        desc="思晨五金的精密五金制品广泛应用于新能源、汽车、建筑、自动化、通讯、办公与家电等行业。"
+        align="center"
+      />
+      <div class="industry-grid" style="margin-top: 52px">
+        {
+          industries.map((item) => (
+            <div class="industry-item" data-reveal>
+              <PlaceholderImage src={item.src} label={item.title} aspect="4/3" />
+              <div class="industry-item__body">
+                <p class="industry-item__en">{item.en}</p>
+                <h3 class="industry-item__title">{item.title}</h3>
+              </div>
+            </div>
           ))
         }
       </div>
@@ -183,20 +242,22 @@ const overviewSlides = [
     </div>
   </section>
 
-  <!-- ======== 制造实力（全宽横幅） ======== -->
-  <section class="media-band">
-    <PlaceholderImage src="/images/equipment/workshop-1.png" label="制造实力" fill />
-    <div class="media-band__overlay" aria-hidden="true"></div>
+  <!-- ======== 制造实力（内容宽横幅） ======== -->
+  <section class="section section--tight">
     <div class="container">
-      <div class="media-band__content">
-        <p class="eyebrow" data-reveal>MANUFACTURING EXCELLENCE</p>
-        <h2 class="h-section" data-reveal style="margin-top: 18px">
-          从图纸到交付<br />全流程品质管控
-        </h2>
-        <p class="lead" data-reveal>
-          冲压、机加、表面处理全工序自主可控，配合完善的检测体系，
-          确保每一件产品都符合客户要求。
-        </p>
+      <div class="media-band">
+        <PlaceholderImage src="/images/equipment/workshop-1.jpg" label="制造实力" fill />
+        <div class="media-band__overlay" aria-hidden="true"></div>
+        <div class="media-band__content">
+          <p class="eyebrow" data-reveal>MANUFACTURING EXCELLENCE</p>
+          <h2 class="h-section" data-reveal style="margin-top: 18px">
+            从图纸到交付<br />全流程品质管控
+          </h2>
+          <p class="lead" data-reveal>
+            冲压、机加、表面处理全工序自主可控，配合完善的检测体系，
+            确保每一件产品都符合客户要求。
+          </p>
+        </div>
       </div>
     </div>
   </section>
@@ -207,28 +268,31 @@ const overviewSlides = [
       <SectionHeading
         eyebrow="BRAND VIDEO"
         title="走进思晨"
-        desc="一段视频，了解我们的工厂、工艺与团队。（占位，上线后替换为真实视频）"
+        desc="一段视频，了解我们的工厂、工艺与团队。"
         align="center"
       />
-      <div style="margin-top: 48px">
-        <!-- 视频就绪后：加 src，例如 <VideoPlaceholder src="/videos/brand.mp4" poster="/images/poster.jpg" /> -->
-        <VideoPlaceholder />
+      <div class="video-frame">
+        <VideoPlaceholder
+          src="/videos/video.mp4"
+          poster="/videos/video.jpg"
+          label="品牌视频"
+        />
       </div>
     </div>
   </section>
 
-  <!-- ======== 车间概貌 ======== -->
+  <!-- ======== 厂区展示 ======== -->
   <section class="section section--alt section--line">
     <div class="container">
       <div style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 24px">
         <SectionHeading
-          eyebrow="OUR WORKSHOPS"
-          title="车间概貌"
-          desc="冷镦、CNC、搓牙、光学筛选四大车间，覆盖从毛坯成型到全检出货的完整工序。"
+          eyebrow="OUR FACILITY"
+          title="厂区展示"
+          desc="冷镦成型、数控加工与仓储三大板块，完整呈现思晨的生产现场。"
         />
-        <a class="btn btn--ghost btn--sm" href="/workshops" data-reveal>查看全部车间 →</a>
+        <a class="btn btn--ghost btn--sm" href="/workshops" data-reveal>查看全部 →</a>
       </div>
-      <div class="shop-grid" style="margin-top: 48px">
+      <div class="shop-grid shop-grid--3" style="margin-top: 48px">
         {
           workshops.map((item) => (
             <a class="shop-card" href={`/workshops#${item.id}`} data-reveal>
@@ -239,7 +303,7 @@ const overviewSlides = [
                 <p class="eyebrow">{item.eyebrow}</p>
                 <h3 class="shop-card__title">{item.title}</h3>
                 <p class="shop-card__desc">{item.summary}</p>
-                <span class="card__link">查看车间 <span aria-hidden="true">→</span></span>
+                <span class="card__link">查看详情 <span aria-hidden="true">→</span></span>
               </div>
             </a>
           ))

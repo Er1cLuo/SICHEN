@@ -143,6 +143,80 @@ function drawFlat(w, h, bg, accent, badge) {
   return px;
 }
 
+/* ---------------- 二维码占位（微信二维码） ---------------- */
+function drawQr(w, h, bg, accent) {
+  const px = Buffer.alloc(w * h * 4);
+  const fill = (x0, y0, x1, y1, [r, g, b]) => {
+    for (let y = Math.max(0, Math.round(y0)); y < Math.min(h, Math.round(y1)); y++) {
+      for (let x = Math.max(0, Math.round(x0)); x < Math.min(w, Math.round(x1)); x++) {
+        const i = (y * w + x) * 4;
+        px[i] = r;
+        px[i + 1] = g;
+        px[i + 2] = b;
+        px[i + 3] = 255;
+      }
+    }
+  };
+
+  fill(0, 0, w, h, bg);
+
+  const n = 25; // 25×25 模块
+  const cell = Math.floor(w / (n + 4));
+  const off = Math.round((w - cell * n) / 2);
+  let seed = 20260101;
+  const rnd = () => {
+    seed = (seed * 1664525 + 1013904223) >>> 0;
+    return seed / 4294967296;
+  };
+  const inFinder = (x, y) =>
+    (x < 7 && y < 7) || (x >= n - 7 && y < 7) || (x < 7 && y >= n - 7);
+  const mid = (n - 1) / 2;
+
+  for (let y = 0; y < n; y++) {
+    for (let x = 0; x < n; x++) {
+      if (inFinder(x, y)) continue;
+      if (Math.abs(x - mid) < 3.2 && Math.abs(y - mid) < 3.2) continue; // 中心留给 logo
+      if (rnd() < 0.47) {
+        fill(off + x * cell, off + y * cell, off + (x + 1) * cell, off + (y + 1) * cell, accent);
+      }
+    }
+  }
+
+  // 三个定位角
+  const finder = (gx, gy) => {
+    for (let y = 0; y < 7; y++) {
+      for (let x = 0; x < 7; x++) {
+        const border = x === 0 || y === 0 || x === 6 || y === 6;
+        const core = x >= 2 && x <= 4 && y >= 2 && y <= 4;
+        if (border || core) {
+          fill(off + (gx + x) * cell, off + (gy + y) * cell, off + (gx + x + 1) * cell, off + (gy + y + 1) * cell, accent);
+        }
+      }
+    }
+  };
+  finder(0, 0);
+  finder(n - 7, 0);
+  finder(0, n - 7);
+
+  // 中心 logo 圆环
+  const cx = w / 2;
+  const cy = h / 2;
+  const r = w * 0.1;
+  for (let y = -r; y <= r; y++) {
+    for (let x = -r; x <= r; x++) {
+      const d = Math.hypot(x, y);
+      if (d <= r) fill(cx + x, cy + y, cx + x + 1, cy + y + 1, bg);
+      if (d > r - 4 && d <= r) fill(cx + x, cy + y, cx + x + 1, cy + y + 1, accent);
+    }
+  }
+  for (let y = -r * 0.45; y <= r * 0.45; y++) {
+    for (let x = -r * 0.45; x <= r * 0.45; x++) {
+      if (Math.hypot(x, y) <= r * 0.45) fill(cx + x, cy + y, cx + x + 1, cy + y + 1, accent);
+    }
+  }
+  return px;
+}
+
 /* ---------------- 地图风格占位（公司位置示意图） ---------------- */
 function drawMap(w, h, bg, accent) {
   const px = Buffer.alloc(w * h * 4);
@@ -212,55 +286,92 @@ const THEME = {
   certificates: { bg: [20, 25, 21], accent: [166, 196, 168] },
   workshops: { bg: [20, 22, 26], accent: [176, 196, 210] },
   map: { bg: [18, 20, 24], accent: [214, 96, 92] },
+  qr: { bg: [18, 18, 22], accent: [226, 226, 220] },
+  industries: { bg: [21, 20, 26], accent: [196, 178, 214] },
+  factory: { bg: [18, 22, 26], accent: [168, 196, 208] },
 };
 
 /* ---------------- 生成清单：[路径, 宽, 高, 分类, 编号] ---------------- */
 const files = [
   // 公司（slider-1/slider-2/facade 已是真实照片 .jpg，不再生成占位）
-  ['company/slider-3.png', 1600, 900, 'company', 3],
   ['company/slider-4.png', 1600, 900, 'company', 4],
   ['company/office-1.png', 1200, 900, 'company', 0],
   ['company/team-1.png', 1200, 900, 'company', 0],
   ['company/map-1.png', 1920, 800, 'map', 0],
+  ['company/wechat-qr.png', 600, 600, 'qr', 0],
+  // 页面顶部背景大图已改为实拍照片（company/aboutus.jpg、showproduct.jpg、showfactory.jpg，2.4:1），
+  // 由 scripts 里的统一脚本裁剪输出，生成器不再管这三张
   // 器械设备（hero / lab-1 / machine-1 / machine-2 / qc-1 已是真实照片 .jpg）
   ['equipment/workshop-1.png', 1600, 900, 'equipment', 0],
   ['equipment/workshop-stamping.png', 1200, 900, 'equipment', 0],
   ['equipment/workshop-cnc.png', 1200, 900, 'equipment', 0],
   ['equipment/warehouse-1.png', 1200, 900, 'equipment', 4],
-  // 产品 8 类
-  ['products/stamping-1.png', 1200, 900, 'products', 1],
-  ['products/machining-1.png', 1200, 900, 'products', 2],
-  ['products/fasteners-1.png', 1200, 900, 'products', 3],
-  ['products/sheet-metal-1.png', 1200, 900, 'products', 4],
-  ['products/spring-1.png', 1200, 900, 'products', 5],
-  ['products/turning-1.png', 1200, 900, 'products', 6],
-  ['products/mold-1.png', 1200, 900, 'products', 7],
-  ['products/finishing-1.png', 1200, 900, 'products', 8],
-  // 产品实拍图集 8 张
-  ['products/gallery-1.png', 1200, 900, 'products', 1],
-  ['products/gallery-2.png', 1200, 900, 'products', 2],
-  ['products/gallery-3.png', 1200, 900, 'products', 3],
-  ['products/gallery-4.png', 1200, 900, 'products', 4],
-  ['products/gallery-5.png', 1200, 900, 'products', 5],
-  ['products/gallery-6.png', 1200, 900, 'products', 6],
-  ['products/gallery-7.png', 1200, 900, 'products', 7],
-  ['products/gallery-8.png', 1200, 900, 'products', 8],
-  // 认证证书 6 张
+  // 首页「核心业务」卡片现直接引用产品分类图（products/<分类>/…），不再单独占位
+  // 认证证书 2 张（ISO9001 质量管理体系 / 高新技术企业证书）
   ['certificates/cert-1.png', 1200, 900, 'certificates', 1],
   ['certificates/cert-2.png', 1200, 900, 'certificates', 2],
-  ['certificates/cert-3.png', 1200, 900, 'certificates', 3],
-  ['certificates/cert-4.png', 1200, 900, 'certificates', 4],
-  ['certificates/cert-5.png', 1200, 900, 'certificates', 5],
-  ['certificates/cert-6.png', 1200, 900, 'certificates', 6],
-  // 车间概貌（cnc-1/2/3、cold-heading-1、optical-sorting-1 已是真实照片 .jpg）
-  ['workshops/cold-heading-2.png', 1200, 900, 'workshops', 2],
-  ['workshops/cold-heading-3.png', 1200, 900, 'workshops', 3],
-  ['workshops/thread-rolling-1.png', 1600, 900, 'workshops', 1],
-  ['workshops/thread-rolling-2.png', 1200, 900, 'workshops', 2],
-  ['workshops/thread-rolling-3.png', 1200, 900, 'workshops', 3],
-  ['workshops/optical-sorting-2.png', 1200, 900, 'workshops', 2],
-  ['workshops/optical-sorting-3.png', 1200, 900, 'workshops', 3],
+  // 厂区展示用图（cnc-1/2/3、cold-heading-1 已是真实照片 .jpg）
+  ['workshops/thread-rolling-1.png', 1600, 900, 'workshops', 1], // 搓牙车间大图（大型搓丝机）
 ];
+
+/* ---------------- 涉及领域：已全部使用实拍照片，见 public/images/industries/*.jpg ---------------- */
+// （原 industries/*.png 线框占位、industries/*.svg 概念图均已废弃）
+
+/* ---------------- 厂区展示（新建 5 个槽位，其余沿用 workshops/ 下已有图） ---------------- */
+for (const name of [
+  'cold-heading-screw',   // 冷镦螺丝生产
+  'cold-heading-general', // 一般冷镦生产
+  'tool-room',            // 工具间
+  'raw-warehouse',        // 原料仓库
+  'finished-warehouse',   // 成品仓库
+]) {
+  files.push([`factory/${name}.png`, 1200, 900, 'factory', 0]);
+}
+
+/* ---------------- 搓牙车间下辖三个车间：各 3 张图（1 大 + 2 小） ---------------- */
+for (const name of [
+  'rolling-0',      // 0# 搓牙机车间
+  'rolling-15',     // 一分半搓牙机车间
+  'rolling-large',  // 大型搓丝机车间
+]) {
+  for (let i = 1; i <= 2; i++) files.push([`factory/${name}-${i}.png`, 1200, 900, 'factory', i]);
+}
+
+/* ---------------- 搓牙车间概述图（大图沿用 workshops/thread-rolling-1.png） ---------------- */
+for (const name of [
+  'thread-rolling-0',   // 0# 搓牙机
+  'thread-rolling-15',  // 一分半搓牙机
+]) {
+  files.push([`factory/${name}.png`, 1200, 900, 'factory', 0]);
+}
+
+/* ---------------- 产品分类图（6 类共 42 张，各占一个子文件夹；页面每行 3 张向下排列） ---------------- */
+for (let i = 1; i <= 6; i++) files.push([`products/nut/nut-${i}.png`, 1200, 900, 'products', i]); // 螺母类 6 张
+for (let i = 1; i <= 12; i++) files.push([`products/screw/screw-${i}.png`, 1200, 900, 'products', i]); // 一般冷镦螺丝件 12 张
+for (let i = 1; i <= 12; i++) files.push([`products/special/special-${i}.png`, 1200, 900, 'products', i]); // 多工位冷镦异形件 12 张
+for (let i = 1; i <= 3; i++) files.push([`products/washer/washer-${i}.png`, 1200, 900, 'products', i]); // 冲压垫片 3 张
+for (let i = 1; i <= 3; i++) files.push([`products/turning/turning-${i}.png`, 1200, 900, 'products', i]); // 车床件 3 张
+for (let i = 1; i <= 6; i++) files.push([`products/other/other-${i}.png`, 1200, 900, 'products', i]); // 其他异形类 6 张
+
+/* ---------------- 厂区展示：3 张图的车间，补第 2、3 张 ---------------- */
+for (const name of [
+  'cold-heading-screw',   // 冷镦螺丝生产车间
+  'cold-heading-general', // 一般冷镦生产车间
+]) {
+  for (const n of [2, 3]) files.push([`factory/${name}-${n}.png`, 1200, 900, 'factory', n]);
+}
+
+/* 仓储三项各 2 张图：补第 2 张（工具间 / 成品仓库 的第 2 张是实拍，存在即跳过） */
+for (const name of ['tool-room', 'raw-warehouse', 'finished-warehouse']) {
+  files.push([`factory/${name}-2.png`, 1200, 900, 'factory', 2]);
+}
+
+/* 其余车间均为 1 张图（大型数控 / 小型数控 / 自动化车床 / 包装），
+   不再生成第 2、3 张；页面按图片数量自动切换为等宽并排布局 */
+
+/* ---------------- 包装车间大图（PART 06） ---------------- */
+files.push(['factory/packing-1.png', 1600, 900, 'factory', 1]);
+
 
 /**
  * 安全保护：默认【不覆盖已存在的图片】。
@@ -287,7 +398,11 @@ for (const [rel, w, h, cat, badge] of files) {
   const buf = encodePng(
     w,
     h,
-    cat === 'map' ? drawMap(w, h, bg, accent) : drawFlat(w, h, bg, accent, badge)
+    cat === 'map'
+      ? drawMap(w, h, bg, accent)
+      : cat === 'qr'
+        ? drawQr(w, h, bg, accent)
+        : drawFlat(w, h, bg, accent, badge)
   );
   fs.writeFileSync(filePath, buf);
   total += buf.length;
