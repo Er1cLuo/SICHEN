@@ -232,6 +232,27 @@ const expr = `(async () => {
       })
     : null;
   const footerBottom = document.querySelector('.footer__bottom');
+
+  // 平台嵌入（B站）：默认只有封面，点击后才注入 iframe
+  const embedWrap = document.querySelector('.video-ph--embed');
+  let embedInfo = null;
+  if (embedWrap) {
+    const poster = embedWrap.querySelector('.video-ph__poster');
+    const before = embedWrap.querySelectorAll('iframe').length;
+    embedWrap.querySelector('.video-ph__play')?.click();
+    await new Promise((r) => setTimeout(r, 800));
+    const iframe = embedWrap.querySelector('iframe');
+    const eb = embedWrap.getBoundingClientRect();
+    embedInfo = {
+      posterSrc: poster?.getAttribute('src') ?? null,
+      posterLoaded: poster ? poster.complete && poster.naturalWidth > 0 : null,
+      iframesBeforeClick: before,
+      iframeSrc: iframe?.getAttribute('src') ?? null,
+      allowFullscreen: iframe ? iframe.hasAttribute('allowfullscreen') : null,
+      box: num(eb.width) + '×' + num(eb.height),
+    };
+  }
+
   const heroEl = document.querySelector('.page-hero');
   const heroBg = document.querySelector('.page-hero__bg img');
   const heroBox = heroEl?.getBoundingClientRect();
@@ -317,6 +338,7 @@ const expr = `(async () => {
       nameSize: footerName ? getComputedStyle(footerName).fontSize : null,
     },
     video: videoInfo,
+    embed: embedInfo,
     logo: logoBox && {
       src: logo.getAttribute('src'),
       w: num(logoBox.width),
@@ -497,6 +519,17 @@ if (data.header) {
   console.log(
     `  联系按钮 X：静止 ${top.cta ? top.cta.left + '~' + top.cta.right : '-'} → 下滑 ${down.cta ? down.cta.left + '~' + down.cta.right : '-'}  ${sameCta ? '✓ 完全没动' : '✗ 有位移'}`,
   );
+}
+
+if (data.embed) {
+  const e = data.embed;
+  console.log('');
+  console.log('视频（平台嵌入）：');
+  console.log(
+    `  窗口 ${e.box} ｜ 封面 ${e.posterSrc}（加载${e.posterLoaded ? '成功' : '失败'}）｜ 点击前 iframe 数 ${e.iframesBeforeClick}`,
+  );
+  console.log(`  点击后 iframe：${e.iframeSrc ?? '未注入 ✗'}`);
+  console.log(`  allowfullscreen：${e.allowFullscreen === null ? '—' : e.allowFullscreen}`);
 }
 
 if (data.video) {
