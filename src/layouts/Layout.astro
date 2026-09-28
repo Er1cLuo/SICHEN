@@ -42,6 +42,21 @@ const orgJsonLd = {
     latitude: '22.348405',
   },
 };
+
+/**
+ * 网站名称结构化数据（Google 搜索结果里显示「中文站名」而不是域名的关键依据）
+ * 只在首页输出；name 就是 Google 优先展示的站点名称
+ */
+const isHome = Astro.url.pathname === '/';
+const websiteJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: '思晨五金制品有限公司',
+  alternateName: ['思晨五金', 'SICEN HARDWARE', '中山思晨五金'],
+  url: `${siteUrl}/`,
+  inLanguage: 'zh-CN',
+  publisher: { '@type': 'Organization', name: '思晨五金制品有限公司' },
+};
 ---
 
 <!doctype html>
@@ -52,7 +67,12 @@ const orgJsonLd = {
     <title>{siteTitle}</title>
     <meta name="description" content={description} />
     <meta name="theme-color" content="#0a0a0b" />
+    {/* 站标：SVG（现代浏览器）+ 48/96/144 PNG（搜索引擎规范：正方形、边长 48 的整数倍）+ ICO 兜底 */}
     <link rel="icon" type="image/svg+xml" href="/logo.svg" />
+    <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48.png" />
+    <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96.png" />
+    <link rel="icon" type="image/png" sizes="144x144" href="/favicon-144.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 
     <meta property="og:type" content="website" />
@@ -69,6 +89,7 @@ const orgJsonLd = {
     {canonical && <link rel="canonical" href={canonical} />}
 
     <script type="application/ld+json" set:html={JSON.stringify(orgJsonLd)} />
+    {isHome && <script type="application/ld+json" set:html={JSON.stringify(websiteJsonLd)} />}
   </head>
   <body>
     <Header current={Astro.url.pathname} />
