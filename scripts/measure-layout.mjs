@@ -29,6 +29,9 @@ const child = spawn(
     '--no-default-browser-check',
     '--disable-gpu',
     '--autoplay-policy=no-user-gesture-required',
+    // 忽略系统代理直连：开着本地代理时 headless 走代理会 ERR_CONNECTION_CLOSED，
+    // 量线上站点必须直连（本机 localhost 本来也不走代理）
+    '--no-proxy-server',
     `--window-size=${width},1200`,
     'about:blank',
   ],
@@ -87,7 +90,17 @@ await send('Emulation.setDeviceMetricsOverride', {
   mobile: false,
 });
 await send('Page.navigate', { url });
-await sleep(2200);
+// 等到 DOM 真正可用再测：测线上站点时首次访问要经历重定向 + TLS + 首字节，
+// 固定 sleep 很容易量到一个还没解析完的空 DOM（表现为 getComputedStyle 报 null）
+for (let i = 0; i < 60; i += 1) {
+  await sleep(250);
+  const probe = await send('Runtime.evaluate', {
+    expression: `document.readyState === 'complete' && !!document.body && !!document.querySelector('.container')`,
+    returnByValue: true,
+  });
+  if (probe.result.value === true) break;
+}
+await sleep(600);
 
 const expr = `(async () => {
   // 站点开启了 scroll-behavior: smooth，会干扰测量，这里临时改成瞬时滚动
@@ -103,8 +116,10 @@ const expr = `(async () => {
   const num = (n) => Math.round(n * 10) / 10;
   const items = [...document.querySelectorAll('.shop-feature')];
   const container = document.querySelector('.container');
-  const cs = getComputedStyle(container);
-  const contentW = container.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
+  const cs = container ? getComputedStyle(container) : null;
+  const contentW = container
+    ? container.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight)
+    : 0;
   const wrap = document.querySelector('.spec-table__wrap');
   const table = document.querySelector('.spec-table');
   const craft = document.querySelector('.craft-grid');
@@ -131,7 +146,10 @@ const expr = `(async () => {
   const headerSnap = () => ({
     h: Math.round(hdr.getBoundingClientRect().height),
     logo: Math.round(brandEl.getBoundingClientRect().height),
-    name: getComputedStyle(document.querySelector('.brand__name')).fontSize,
+    name: (() => {
+      const el = document.querySelector('.brand__name');
+      return el ? getComputedStyle(el).fontSize : null;
+    })(),
     nav: navLinkEl ? getComputedStyle(navLinkEl).fontSize : null,
     navCount: document.querySelectorAll('.nav .nav__link').length,
     ctaCount: document.querySelectorAll('.nav__cta').length,
@@ -275,6 +293,18 @@ const expr = `(async () => {
   }
   return {
     viewport: window.innerWidth,
+    // 诊断：远程页面若缺某个元素，定位到底是谁是 null（避免 getComputedStyle 直接报错无从查起）
+    _diag: {
+      url: location.href,
+      readyState: document.readyState,
+      container: !!container,
+      header: !!hdr,
+      brandMark: !!brandEl,
+      brandName: !!document.querySelector('.brand__name'),
+      footerBottom: !!document.querySelector('.footer__bottom'),
+      logoImg: !!logo,
+      body: !!document.body,
+    },
     contentW: num(contentW),
     hero: heroBox && {
       w: num(heroBox.width),
@@ -400,6 +430,7 @@ const data = result.value;
 if (!data || !data.rows) {
   console.error('页面测量脚本返回异常：');
   console.error('  返回键 =', data ? Object.keys(data).join(', ') : String(data));
+  console.error('  诊断 =', JSON.stringify(data?._diag ?? null));
   console.error('  原始结果 =', JSON.stringify(result).slice(0, 400));
   ws.close();
   child.kill();
