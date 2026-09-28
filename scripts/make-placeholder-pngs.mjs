@@ -301,12 +301,9 @@ const files = [
   ['company/wechat-qr.png', 600, 600, 'qr', 0],
   // 页面顶部背景大图已改为实拍照片（company/aboutus.jpg、showproduct.jpg、showfactory.jpg，2.4:1），
   // 由 scripts 里的统一脚本裁剪输出，生成器不再管这三张
-  // 器械设备（hero / lab-1 / machine-1 / machine-2 / qc-1 已是真实照片 .jpg）
-  ['equipment/workshop-1.png', 1600, 900, 'equipment', 0],
-  ['equipment/workshop-stamping.png', 1200, 900, 'equipment', 0],
-  ['equipment/workshop-cnc.png', 1200, 900, 'equipment', 0],
-  ['equipment/warehouse-1.png', 1200, 900, 'equipment', 4],
   // 首页「核心业务」卡片现直接引用产品分类图（products/<分类>/…），不再单独占位
+  // 器械设备目录已全部是实拍 .jpg（hero / workshop-1 / lab-1 / machine-1 / machine-2 / qc-1），
+  // 原 workshop-1/workshop-stamping/workshop-cnc/warehouse-1 四张线框占位已删除，不再生成
   // 认证证书 2 张（ISO9001 质量管理体系 / 高新技术企业证书）
   ['certificates/cert-1.png', 1200, 900, 'certificates', 1],
   ['certificates/cert-2.png', 1200, 900, 'certificates', 2],
@@ -335,14 +332,6 @@ for (const name of [
   'rolling-large',  // 大型搓丝机车间
 ]) {
   for (let i = 1; i <= 2; i++) files.push([`factory/${name}-${i}.png`, 1200, 900, 'factory', i]);
-}
-
-/* ---------------- 搓牙车间概述图（大图沿用 workshops/thread-rolling-1.png） ---------------- */
-for (const name of [
-  'thread-rolling-0',   // 0# 搓牙机
-  'thread-rolling-15',  // 一分半搓牙机
-]) {
-  files.push([`factory/${name}.png`, 1200, 900, 'factory', 0]);
 }
 
 /* ---------------- 产品分类图（6 类共 42 张，各占一个子文件夹；页面每行 3 张向下排列） ---------------- */

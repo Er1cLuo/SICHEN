@@ -28,21 +28,34 @@ npm run preview  # 本地预览构建产物
 │   ├── pages/               # 5 个页面（index/about/products/workshops/contact）
 │   └── styles/
 │       └── global.css       # 全站设计系统
+├── scripts/                 # 维护脚本（占位图生成、体积/图片/布局自检，见下）
+├── docs/                    # 交付文档（EdgeOne 部署指南、文案填写表）
+├── originals/               # 原图/原视频备份（不进仓库、不参与构建）
 ├── astro.config.mjs
 └── package.json
 ```
 
-## 上线前需要替换的占位内容
+## 目前仍是占位、待替换的内容
 
-| 位置 | 内容 | 说明 |
+站点已上线（https://www.sicenhardware.com），域名、地址、电话、邮箱、备案号都已是正式信息。下面这些**还是线框占位图或待核实文案**（共 29 张占位图，用 `node scripts/check-assets.mjs` 可随时复查）：
+
+| 位置 | 占位数量 | 怎么换成实拍 |
 |---|---|---|
-| 所有 `<PlaceholderImage>` | 换成 `<img src="/images/xxx.jpg">` | 把真实图片放入 `public/images/` |
-| `<VideoPlaceholder>` | 换成 `<video>` 或视频平台嵌入 | 见组件内注释 |
-| 各页面正文、统计数据 | 真实公司介绍、产能数据 | 目前为起草占位文案 |
-| `Footer.astro` / `contact.astro` | 地址、电话、邮箱 | 目前为占位信息 |
-| `Layout.astro` | JSON-LD 中的域名/邮箱 | 上线后替换为正式域名 |
-| `astro.config.mjs` | `site` 字段 | 换成正式域名 |
-| `workshops.astro` 车间描述与参数 | 5 大部分、13 个车间的描述、设备参数与工艺特点 | 图片按同名文件覆盖即可 |
+| 产品中心 · 其他异形类 `products/other/` | 6 张 | 把实拍图按同名放进对应目录即可覆盖（`.jpg/.jpeg/.png/.webp` 都认，页面构建时自动识别扩展名） |
+| 产品中心 · 车床件 `products/turning/` | 3 张 | 同上 |
+| 产品中心 · 冲压垫片 `products/washer/` | 3 张 | 同上 |
+| 厂区展示 · 搓牙车间 `factory/rolling-*`、`cold-heading-*` | 12 张 | 放入 `public/images/factory/` 同名覆盖 |
+| 厂区展示 · 搓牙车间概述图 `workshops/thread-rolling-1.png` | 1 张 | 建议横版 16:9 实拍 |
+| 资质证书 `certificates/cert-1/2.png` | 2 张 | 扫描件横版（3:2 或 4:3），图注在 `about.astro` 的 `certGallery` 里改 |
+| 关于我们 · 办公与展厅 `company/office-1.png` | 1 张 | 放入 `public/images/company/` 同名覆盖 |
+| 微信二维码 `company/wechat-qr.png` | 1 张 | **目前是示例二维码，必须换成业务微信真实二维码**（方形，≥600×600） |
+| 首页数据统计（15+ 年 / 500+ 客户 / 15+ 出口国家 / 98.5% 一次合格率） | — | 起草数值，请核实后改 `index.astro` 的 `stats` 数组 |
+| 公司简介、发展历程、理念等正文 | — | 起草文案，见各页面 `---` 之间的数组与正文 |
+| `PUBLIC_AMAP_KEY` | — | 未配置时地图回退成位置示意图；在 EdgeOne 环境变量里加上后重新部署 |
+
+> 产品中心 6 类共 42 张图，其中 30 张已是实拍；首页轮播、涉及领域 8 张、厂区展示大部分车间、三页页头大图都已是实拍照片。
+
+域名出现的地方共 4 处，换域名要一起改：`astro.config.mjs` 的 `site`、`public/sitemap.xml`、`public/robots.txt`、`src/layouts/Layout.astro` 的 JSON-LD。
 
 ## 日常维护：改文字 / 加图片视频 / 发布
 
@@ -56,8 +69,8 @@ npm run preview  # 本地预览构建产物
 | 首页各区块、数据统计、车间卡片 | `src/pages/index.astro` |
 | 关于我们（简介/理念/历程/资质） | `src/pages/about.astro` |
 | 产品中心（产品卡片/流程/图集） | `src/pages/products.astro` |
-| 车间概貌（冷镦/CNC/搓牙/光学筛选四大车间） | `src/pages/workshops.astro` |
-| 联系我们（地址/电话/留言表单） | `src/pages/contact.astro` |
+| 厂区展示（冷镦成型/搓牙/数控加工/光学筛选/仓储/包装，6 部分 14 个车间） | `src/pages/workshops.astro` |
+| 联系我们（地址/电话/微信/地图，无留言表单） | `src/pages/contact.astro` |
 | 全站配色/字体/间距 | `src/styles/global.css`（顶部 `:root` 变量） |
 
 **规律**：每个页面文件顶部 `---` 之间的数组（如 `stats`、`businesses`、`workshops`、`timeline`、`products`、`contactItems`）就是列表数据——想增删卡片/条目就在这里改；`---` 以下的正文 HTML 是页面里的段落文案。
@@ -79,8 +92,9 @@ npm run preview  # 本地预览构建产物
    <VideoPlaceholder src="/videos/video.mp4" poster="/videos/video.jpg" label="品牌视频" />
    ```
    > 只要视频还没开始播放，窗口里显示的就是 `poster` 封面图。
-3. 播放器固定在 16:9 窗口内播放（宽为内容的 3/4），**不提供全屏**（`controlsList="nofullscreen"` + 画中画禁用 + 脚本兜底），符合"只允许窗口播放"的要求。
-4. 想用 B站 / YouTube / 腾讯视频嵌入，直接把 `<VideoPlaceholder />` 换成对应 iframe。
+3. 播放器固定在 16:9 窗口内播放（宽为内容的 3/4）。
+4. **当前线上用的是 B站 平台嵌入**（`<VideoPlaceholder embed="…" poster="/videos/video.jpg" />`）：页面先只显示封面 + 播放按钮，点击后才注入 iframe（首屏不加载播放器、不拖慢速度），嵌入模式**允许全屏**。
+5. 本地视频模式（`<VideoPlaceholder src="/videos/video.mp4" poster="…" />`）按"只允许窗口播放"处理：**不提供全屏**（`controlsList="nofullscreen"` + 画中画禁用 + 脚本兜底）。
 
 **导出视频时必须满足的规格**（这是踩过坑的清单，务必照做）：
 
@@ -122,6 +136,21 @@ npm run dev       # 本地实时预览 http://localhost:4321（改完即时刷�
 npm run build     # 构建静态文件到 dist/
 npm run preview   # 本地预览构建产物
 ```
+
+## 维护脚本（都在 `scripts/` 下，用 `node scripts/xxx.mjs` 运行）
+
+| 脚本 | 用途 |
+|---|---|
+| `make-placeholder-pngs.mjs` | 生成还没换成实拍的线框占位图。**已存在的文件一律跳过**，不会覆盖真实照片（加 `--force` 才会覆盖） |
+| `check-assets.mjs` | 构建后核对：页面引用的图片/视频是否都存在，`public/` 里有没有没人引用的孤图 |
+| `audit-dead-css.mjs` | 审计 `global.css`：定义了却没被页面用到的 class、定义了却没被 `var()` 引用的 CSS 变量 |
+| `measure-layout.mjs` | 用系统 Chrome/Edge 的 headless + CDP 量真实渲染结果（图文间距、图片宽度、页头滚动是否抖动）：`node scripts/measure-layout.mjs http://127.0.0.1:4322/workshops 1440` |
+| `optimize-images.ps1` | 把 `public/images` 下的照片批量压成适合网页的 JPEG，原图备份到 `originals/` |
+| `mp4-info.mjs` / `mp4-faststart.mjs` | 自检自托管视频的编码/码率/索引位置；必要时无损把索引 `moov` 挪到文件开头 |
+| `analyze-logo.mjs` | 换了 `public/logo.svg` 后，重新推算贴合图形的正方形 viewBox |
+| `make-content-sheet.mjs` | 重新生成 `docs/思晨五金-网站文案填写表.xlsx` |
+
+典型顺序：改内容 → `npm run build` → `node scripts/check-assets.mjs` 查缺图 →（动过样式再跑）`node scripts/audit-dead-css.mjs` → `node scripts/measure-layout.mjs` 量效果 → push 自动部署。
 
 ## 部署：EdgeOne Pages（GitHub 自动部署）
 
